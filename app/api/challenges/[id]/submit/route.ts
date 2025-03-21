@@ -43,6 +43,7 @@ export async function POST(request: Request, context: { params: Promise<{id: str
 
     // Validate flag
     if (flag !== challenge.flag) {
+      console.log("Incorrect flag submitted by team:", team.name);
       return NextResponse.json({message: "Incorrect flag"}, {status: 400});
     }
 
@@ -55,6 +56,8 @@ export async function POST(request: Request, context: { params: Promise<{id: str
       await chall.save();
       team.score += chall.points;
       await team.save();
+
+      console.log("Flag submitted by team:", team.name);
     }
 
     return NextResponse.json(

@@ -67,7 +67,7 @@ export default function ChallengePage() {
                 <h2 className="text-2xl font-semibold break-words">
                   {challenge.title}
                 </h2>
-                <p className="text-muted-foreground break-words">
+                <p className="text-muted-foreground break-words line-clamp-1">
                   {challenge.description}
                 </p>
               </div>
@@ -81,7 +81,7 @@ export default function ChallengePage() {
               </div>
               <div className="flex items-center gap-4 text-sm">
                 <span className="text-muted-foreground">
-                  Solved by {challenge.solveCount} users
+                  Solved by {challenge.solveCount} teams
                 </span>
               </div>
               {challenge.fileUrls
@@ -142,7 +142,7 @@ export default function ChallengePage() {
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <span className="text-muted-foreground">
-                      Solved by {selectedChallenge.solveCount} users
+                      Solved by {selectedChallenge.solveCount} teams
                     </span>
                   </div>
                   {selectedChallenge.fileUrls.length > 0 && (
