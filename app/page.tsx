@@ -79,24 +79,7 @@ export default function Home() {
               SKICTF
             </div>
             <div className="flex gap-8 text-muted-foreground">
-              <Link
-                href="/privacy"
-                className="hover:text-primary transition-colors"
-              >
-                Privacy Policy
-              </Link>
-              <Link
-                href="/terms"
-                className="hover:text-primary transition-colors"
-              >
-                Terms of Service
-              </Link>
-              <Link
-                href="/contact"
-                className="hover:text-primary transition-colors"
-              >
-                Contact
-              </Link>
+              Made with 💓 by Colin from SMK Immanuel
             </div>
           </div>
         </div>
