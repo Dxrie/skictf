@@ -31,13 +31,13 @@ export async function POST(request: Request) {
     const data = await request.json();
 
     // Validate GitHub URL
-    if (!data.fileUrl.startsWith('https://github.com/') && 
-        !data.fileUrl.startsWith('https://raw.githubusercontent.com/')) {
-      return NextResponse.json(
-        { message: 'Invalid GitHub URL' },
-        { status: 400 }
-      );
-    }
+    // if (!data.fileUrl.startsWith('https://github.com/') && 
+    //     !data.fileUrl.startsWith('https://raw.githubusercontent.com/')) {
+    //   return NextResponse.json(
+    //     { message: 'Invalid GitHub URL' },
+    //     { status: 400 }
+    //   );
+    // }
 
     const challenge = await Challenge.create({
       ...data,
@@ -59,6 +59,7 @@ export async function POST(request: Request) {
         );
       }
     }
+    console.error('Create challenge error:', error); // Log the error for debugging purposes
     return NextResponse.json(
       { message: 'Failed to create challenge' },
       { status: 500 }

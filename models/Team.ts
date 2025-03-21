@@ -7,6 +7,7 @@ export interface ITeam extends mongoose.Document {
   leader: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
+  score: number;
 }
 
 const teamSchema = new mongoose.Schema<ITeam>(
@@ -27,6 +28,10 @@ const teamSchema = new mongoose.Schema<ITeam>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: [true, "Team leader is required"]
+    },
+    score: {
+      type: Number,
+      default: 0 
     }
   },
   { timestamps: true }

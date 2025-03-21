@@ -19,7 +19,8 @@ interface Challenge {
   description: string;
   points: number;
   category: string;
-  fileUrl: string;
+  fileUrls: string[];
+  flag: string;
 }
 
 export default function AdminChallengePage() {
@@ -69,6 +70,7 @@ export default function AdminChallengePage() {
       points: Number(formData.get("points")),
       category: formData.get("category") as string,
       fileUrl: formData.get("fileUrl") as string,
+      flag: formData.get("flag") as string,
     };
 
     try {
@@ -142,7 +144,7 @@ export default function AdminChallengePage() {
           {challenges.map((challenge) => (
             <div
               key={challenge._id}
-              className="bg-card p-6 rounded-lg shadow-lg space-y-2"
+              className="bg-card p-6 rounded-lg shadow-lg space-y-2 border"
             >
               <div className="flex justify-between items-start">
                 <div>
@@ -173,7 +175,7 @@ export default function AdminChallengePage() {
                 </span>
               </div>
               <a
-                href={challenge.fileUrl}
+                href={challenge.fileUrls[0]}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-primary hover:underline"
@@ -239,16 +241,28 @@ export default function AdminChallengePage() {
               </div>
 
               <div>
-                <Label htmlFor="fileUrl">GitHub File URL</Label>
+                <Label>File URLs (GitHub)</Label>
+                {[0, 1, 2].map((index) => (
+                  <Input
+                    key={index}
+                    name="fileUrls"
+                    defaultValue={editingChallenge?.fileUrls?.[index] || ""}
+                    className="mt-1"
+                    placeholder={`File URL ${index + 1} (optional)`}
+                  />
+                ))}
+              </div>
+
+              <div>
+                <Label htmlFor="flag">Correct Flag</Label>
                 <Input
-                  id="fileUrl"
-                  name="fileUrl"
-                  type="url"
-                  defaultValue={editingChallenge?.fileUrl}
+                  id="flag"
+                  name="flag"
+                  type="text"
+                  defaultValue={editingChallenge?.flag}
                   required
                   className="mt-1"
-                  placeholder="https://github.com/..."
-                  pattern="https://github.com/.*|https://raw.githubusercontent.com/.*"
+                  placeholder="SKICTF{...}"
                 />
               </div>
 

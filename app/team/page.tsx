@@ -19,6 +19,7 @@ interface Team {
   name: string;
   leader: string;
   members: TeamMember[];
+  score: number;
 }
 
 export default function TeamPage() {
@@ -124,20 +125,21 @@ export default function TeamPage() {
         </h1>
 
         {team ? (
-          <div className="bg-card p-8 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold mb-4">{team.name}</h2>
-            <h4 className="text-lg font-medium mb-2">ID: {team._id}</h4>
+          <div className="bg-card p-8 rounded-lg shadow-lg border">
+            <h2 className="text-2xl font-semibold mb-4 text-primary">{team.name}</h2>
+            <h5 className="text-sm text-muted-foreground">ID: {team._id}</h5>
+            <h5 className="text-sm text-muted-foreground mb-4">Score: {team.score}</h5>
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-medium mb-2">Team Members</h3>
+                <h3 className="text-lg font-medium mb-2 text-primary">Team Members</h3>
                 <div className="space-y-2">
                   {team.members.map((member) => (
                     <div
                       key={member.email}
-                      className="flex items-center justify-between p-3 bg-background rounded-lg"
+                      className="flex items-center justify-between p-3 bg-background rounded-lg border border-muted-foreground"
                     >
                       <div>
-                        <p className="font-medium">{member.username}</p>
+                        <p className="font-medium text-primary">{member.username}</p>
                         <p className="text-sm text-muted-foreground">
                           {member.email}
                         </p>

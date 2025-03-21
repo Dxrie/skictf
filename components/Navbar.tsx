@@ -15,13 +15,13 @@ export default function Navbar() {
   const navItems = session?.user.isAdmin
     ? [
         {name: "Challenges", href: "/challenges"},
-        {name: "Leaderboard", href: "/leaderboard"},
+        {name: "Leaderboard", href: "/leaderboards"},
         {name: "Team", href: "/team"},
         {name: "Admin", href: "/admin/challenges"},
       ]
     : [
         {name: "Challenges", href: "/challenges"},
-        {name: "Leaderboard", href: "/leaderboard"},
+        {name: "Leaderboard", href: "/leaderboards"},
         {name: "Team", href: "/team"},
       ];
 

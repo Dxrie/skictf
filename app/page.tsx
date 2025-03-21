@@ -11,6 +11,10 @@ export default function Home() {
           Test your hacking skills, solve challenging puzzles, and compete in
           our Capture The Flag competition.
         </p>
+
+        <p className="text-sm text-muted-foreground max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200">
+          {"SKICTF{H4ppy_H4ck1ng_H4ck3r!}"}
+        </p>
       </main>
 
       <section className="container mx-auto px-4 py-24">
