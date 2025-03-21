@@ -1,0 +1,153 @@
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import authOptions from '@/app/authOptions';
+import dbConnect from '@/lib/db';
+import Challenge from '@/models/Challenge';
+
+export async function GET() {
+  try {
+    await dbConnect();
+    const challenges = await Challenge.find().sort({ createdAt: -1 });
+    return NextResponse.json(challenges);
+  } catch (error) {
+    return NextResponse.json(
+      { message: 'Failed to fetch challenges' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json(
+        { message: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    await dbConnect();
+    const data = await request.json();
+
+    // Validate GitHub URL
+    if (!data.fileUrl.startsWith('https://github.com/') && 
+        !data.fileUrl.startsWith('https://raw.githubusercontent.com/')) {
+      return NextResponse.json(
+        { message: 'Invalid GitHub URL' },
+        { status: 400 }
+      );
+    }
+
+    const challenge = await Challenge.create({
+      ...data,
+    });
+
+    return NextResponse.json(challenge, { status: 201 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      if ('code' in error && error.code === 11000) {
+        return NextResponse.json(
+          { message: 'Challenge title already exists' },
+          { status: 400 }
+        );
+      }
+      if (error.name === 'ValidationError') {
+        return NextResponse.json(
+          { message: error.message },
+          { status: 400 }
+        );
+      }
+    }
+    return NextResponse.json(
+      { message: 'Failed to create challenge' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json(
+        { message: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    await dbConnect();
+    const data = await request.json();
+    const { id, ...updateData } = data;
+
+    // Validate GitHub URL
+    if (!updateData.fileUrl.startsWith('https://github.com/') && 
+        !updateData.fileUrl.startsWith('https://raw.githubusercontent.com/')) {
+      return NextResponse.json(
+        { message: 'Invalid GitHub URL' },
+        { status: 400 }
+      );
+    }
+
+    const challenge = await Challenge.findByIdAndUpdate(
+      id,
+      { ...updateData, updatedAt: new Date() },
+      { new: true, runValidators: true }
+    );
+
+    if (!challenge) {
+      return NextResponse.json(
+        { message: 'Challenge not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(challenge);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      if (error.name === 'ValidationError') {
+        return NextResponse.json(
+          { message: error.message },
+          { status: 400 }
+        );
+      }
+    }
+    return NextResponse.json(
+      { message: 'Failed to update challenge' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json(
+        { message: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    await dbConnect();
+    const url = new URL(request.url);
+    const id = url.pathname.split('/').pop();
+
+    const challenge = await Challenge.findByIdAndDelete(id);
+
+    if (!challenge) {
+      return NextResponse.json(
+        { message: 'Challenge not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ message: 'Challenge deleted successfully' });
+  } catch (error: unknown) {
+    console.error('Delete challenge error:', error);
+    return NextResponse.json(
+      { message: 'Failed to delete challenge' },
+      { status: 500 }
+    );
+  }
+}
