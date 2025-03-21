@@ -75,6 +75,17 @@ export default function ChallengePage() {
                 <span className="text-primary font-medium">
                   {challenge.points} points
                 </span>
+                <span className="text-primary font-bold">
+                  {challenge.points >= 50 && challenge.points < 250
+                    ? "Easy"
+                    : challenge.points >= 250 && challenge.points < 500
+                    ? "Medium"
+                    : challenge.points >= 500 && challenge.points < 1000
+                    ? "Hard"
+                    : challenge.points >= 1000
+                    ? "Impossible"
+                    : ""}
+                </span>
                 <span className="text-muted-foreground">
                   Category: {challenge.category}
                 </span>
@@ -211,9 +222,7 @@ export default function ChallengePage() {
                       </p>
                     )}
                     {flagStatus === "incorrect" && (
-                      <p className="text-red-500 text-sm">
-                        {error}
-                      </p>
+                      <p className="text-red-500 text-sm">{error}</p>
                     )}
                   </div>
                 </div>
