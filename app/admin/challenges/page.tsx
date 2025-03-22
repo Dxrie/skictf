@@ -214,7 +214,10 @@ export default function AdminChallengePage() {
                 ))}
             </div>
 
-            <Dialog open={showDialog} onOpenChange={setShowDialog}>
+            <Dialog open={showDialog} onOpenChange={(open) => {
+              if (!open) setEditingChallenge(null);
+              setShowDialog(open);
+            }}>
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                   <DialogTitle>
@@ -259,13 +262,21 @@ export default function AdminChallengePage() {
 
                   <div>
                     <Label htmlFor="category">Category</Label>
-                    <Input
+                    <select
                       id="category"
                       name="category"
                       defaultValue={editingChallenge?.category}
                       required
-                      className="mt-1"
-                    />
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <option value="">Select a category</option>
+                      <option value="Digital Forensics">Digital Forensics</option>
+                      <option value="Web Exploitation">Web Exploitation</option>
+                      <option value="Binary Exploitation">Binary Exploitation</option>
+                      <option value="Reverse Engineering">Reverse Engineering</option>
+                      <option value="Cryptography">Cryptography</option>
+                      <option value="Miscellaneous">Miscellaneous</option>
+                    </select>
                   </div>
 
                   <div>
