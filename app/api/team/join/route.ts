@@ -12,6 +12,13 @@ export async function POST(req: Request) {
       return NextResponse.json({message: "Unauthorized"}, {status: 401});
     }
 
+    if (session.user.isAdmin) {
+      return NextResponse.json(
+        {message: "Admin cannot join a team"},
+        {status: 400}
+      );
+    }
+
     const {teamId} = await req.json();
 
     if (!teamId) {

@@ -1,9 +1,9 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const ChallengeSchema = new mongoose.Schema({
   author: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     required: true,
   },
   title: {
@@ -25,23 +25,27 @@ const ChallengeSchema = new mongoose.Schema({
     required: true,
   },
   fileUrls: {
-    type: [{
-      type: String,
-      required: true
-    }],
+    type: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
     required: true,
-    default: []
+    default: [],
   },
   solves: {
-    type: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    }],
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   solveCount: {
     type: Number,
     default: 0,
-    min: 0
+    min: 0,
   },
   flag: {
     type: String,
@@ -55,13 +59,18 @@ const ChallengeSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  published: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // Add index for better query performance
-ChallengeSchema.index({ title: 1 });
-ChallengeSchema.index({ category: 1 });
-ChallengeSchema.index({ points: 1 });
+ChallengeSchema.index({title: 1});
+ChallengeSchema.index({category: 1});
+ChallengeSchema.index({points: 1});
 
-const Challenge = mongoose.models.Challenge || mongoose.model('Challenge', ChallengeSchema);
+const Challenge =
+  mongoose.models.Challenge || mongoose.model("Challenge", ChallengeSchema);
 
 export default Challenge;

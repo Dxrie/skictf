@@ -3,14 +3,18 @@ import {getServerSession} from "next-auth";
 import authOptions from "@/app/authOptions";
 import dbConnect from "@/lib/db";
 import Challenge from "@/models/Challenge";
+import {PublishModel} from "@/models/Publish";
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     await dbConnect();
-    const challenges = await Challenge.find().populate('author', 'username').sort({createdAt: -1});
+    const challenges = await Challenge.find()
+      .populate("author", "username")
+      .sort({createdAt: -1});
+    const publish = await PublishModel.findOne({publish: true});
 
-    if (session?.user?.teamId) {
+    if (session?.user?.teamId && publish) {
       // Include solved status for the team
       const challengesWithSolvedStatus = challenges.map((challenge) => ({
         ...challenge.toObject(),
@@ -19,7 +23,18 @@ export async function GET() {
       return NextResponse.json(challengesWithSolvedStatus);
     }
 
-    return NextResponse.json(challenges);
+    if (!session?.user?.isAdmin && publish) {
+      return NextResponse.json(challenges);
+    }
+
+    if (session?.user.isAdmin) {
+      return NextResponse.json(challenges);
+    }
+
+    return NextResponse.json(
+      {message: "Event hasn't started yet."},
+      {status: 400}
+    );
   } catch (error) {
     return NextResponse.json(
       {message: "Failed to fetch challenges"},

@@ -22,6 +22,7 @@ interface Challenge {
   category: string;
   fileUrls: string[];
   flag: string;
+  published: boolean;
 }
 
 export default function AdminChallengePage() {

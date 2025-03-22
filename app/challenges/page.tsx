@@ -12,7 +12,7 @@ import {
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {useSession} from "next-auth/react";
-import { useRouter } from "next/navigation";
+import {useRouter} from "next/navigation";
 
 interface Challenge {
   _id: string;
@@ -25,6 +25,7 @@ interface Challenge {
   solves: string[];
   flag?: string;
   isSolved?: boolean;
+  published: boolean;
   author: {
     _id: string;
     username: string;
@@ -38,6 +39,7 @@ export default function ChallengePage() {
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(
     null
   );
+  const [bruh, setBruh] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [flagInput, setFlagInput] = useState("");
   const [flagStatus, setFlagStatus] = useState<"" | "correct" | "incorrect">(
@@ -55,7 +57,7 @@ export default function ChallengePage() {
   };
 
   useEffect(() => {
-    if (!session) return router.push('/auth/login');
+    if (!session) return router.push("/auth/login");
 
     console.log(session);
     fetchChallenges();
@@ -68,6 +70,14 @@ export default function ChallengePage() {
         const data = await response.json();
         setChallenges(data);
         groupChallengesByCategory(data);
+      } else {
+        const errorData = await response.json();
+
+        if (errorData.message === "Event hasn't started yet.") {
+          setBruh(errorData.message);
+        } else {
+          console.error("Error fetching challenges:", errorData.message);
+        }
       }
     } catch (error) {
       console.error("Error fetching challenges:", error);
@@ -83,7 +93,15 @@ export default function ChallengePage() {
       </div>
     );
   }
-  return (
+  return bruh ? (
+    <div className="min-h-screen bg-background px-4 py-16">
+      <div className="container mx-auto max-w-7xl">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-8 text-center md:text-left">
+          {bruh}
+        </h1>
+      </div>
+    </div>
+  ) : (
     <div className="min-h-screen bg-background px-4 py-16">
       <div className="container mx-auto max-w-7xl">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-8 text-center md:text-left">
@@ -171,24 +189,31 @@ export default function ChallengePage() {
                             <p className="text-muted-foreground whitespace-pre-wrap break-words">
                               {selectedChallenge.description}
                             </p>
-                            {selectedChallenge.fileUrls && selectedChallenge.fileUrls.length > 0 && (
-                              <div className="space-y-2">
-                                <Label className="text-sm font-medium">Attachments</Label>
-                                <div className="space-y-1 flex gap-2">
-                                  {selectedChallenge.fileUrls.map((url, index) => (
-                                    <a
-                                      key={url}
-                                      href={url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-primary hover:underline"
-                                    >
-                                      <Button className="cursor-pointer">Attachment {index + 1}</Button>
-                                    </a>
-                                  ))}
+                            {selectedChallenge.fileUrls &&
+                              selectedChallenge.fileUrls.length > 0 && (
+                                <div className="space-y-2">
+                                  <Label className="text-sm font-medium">
+                                    Attachments
+                                  </Label>
+                                  <div className="space-y-1 flex gap-2">
+                                    {selectedChallenge.fileUrls.map(
+                                      (url, index) => (
+                                        <a
+                                          key={url}
+                                          href={url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="text-primary hover:underline"
+                                        >
+                                          <Button className="cursor-pointer">
+                                            Attachment {index + 1}
+                                          </Button>
+                                        </a>
+                                      )
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
-                            )}
+                              )}
                             <div className="flex flex-wrap gap-3 text-sm items-center">
                               <span className="text-primary font-medium bg-primary/10 px-3 py-1.5 rounded-full">
                                 {selectedChallenge.points} points
