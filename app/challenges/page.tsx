@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import {useState, useEffect} from "react";
+import {Button} from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,10 +9,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {useSession} from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface Challenge {
   _id: string;
@@ -32,7 +32,8 @@ interface Challenge {
 }
 
 export default function ChallengePage() {
-  const { data: session } = useSession();
+  const {data: session} = useSession();
+  const router = useRouter();
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(
     null
@@ -53,8 +54,11 @@ export default function ChallengePage() {
   };
 
   useEffect(() => {
+    if (!session) return router.push('/auth/login');
+
+    console.log(session);
     fetchChallenges();
-  }, []);
+  }, [session]);
 
   const fetchChallenges = async () => {
     try {
@@ -86,13 +90,16 @@ export default function ChallengePage() {
                 .filter((challenge) => challenge.category === category)
                 .sort((a, b) => a.points - b.points)
                 .map((challenge) => (
-                  <Dialog key={challenge._id} onOpenChange={(open) => {
-                    if (!open) {
-                      setSelectedChallenge(null);
-                      setFlagInput("");
-                      setFlagStatus("");
-                    }
-                  }}>
+                  <Dialog
+                    key={challenge._id}
+                    onOpenChange={(open) => {
+                      if (!open) {
+                        setSelectedChallenge(null);
+                        setFlagInput("");
+                        setFlagStatus("");
+                      }
+                    }}
+                  >
                     <DialogTrigger asChild>
                       <div
                         className={`p-6 rounded-lg shadow-lg space-y-3 hover:shadow-xl transition-shadow duration-200 cursor-pointer border ${
@@ -142,83 +149,116 @@ export default function ChallengePage() {
                       </div>
                     </DialogTrigger>
 
-                    {selectedChallenge && selectedChallenge._id === challenge._id && (
-                      <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
-                        <DialogHeader className="pb-4">
-                          <DialogTitle className="text-2xl break-words">
-                            {selectedChallenge.title}
-                          </DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-6 px-1 overflow-hidden">
-                          <p className="text-muted-foreground whitespace-pre-wrap break-words">
-                            {selectedChallenge.description}
-                          </p>
-                          <div className="flex flex-wrap gap-3 text-sm items-center">
-                            <span className="text-primary font-medium bg-primary/10 px-3 py-1.5 rounded-full">
-                              {selectedChallenge.points} points
-                            </span>
-                            <span className="text-muted-foreground">
-                              Category: {selectedChallenge.category}
-                            </span>
-                            <span className="text-muted-foreground">
-                              Solved by {selectedChallenge.solveCount} teams
-                            </span>
-                          </div>
-                          <div className="space-y-4 pt-4 border-t">
-                            <Label htmlFor="flag" className="text-sm font-medium">
-                              Submit Flag
-                            </Label>
-                            <div className="flex gap-2">
-                              <Input
-                                id="flag"
-                                value={flagInput}
-                                onChange={(e) => {
-                                  setFlagInput(e.target.value);
-                                  setFlagStatus("");
-                                }}
-                                placeholder="SKICTF{...}"
-                                className="flex-1"
-                              />
-                              <Button
-                                disabled={submitting}
-                                onClick={async () => {
-                                  try {
-                                    setSubmitting(true);
-                                    const response = await fetch(
-                                      `/api/challenges/${selectedChallenge._id}/submit`,
-                                      {
-                                        method: "POST",
-                                        headers: {
-                                          "Content-Type": "application/json",
-                                        },
-                                        body: JSON.stringify({ flag: flagInput }),
-                                      }
-                                    );
-
-                                    if (response.ok) {
-                                      setFlagStatus("correct");
-                                    } else {
-                                      const r = await response.json();
-                                      setError(r.message);
-                                      setFlagStatus("incorrect");
-                                    }
-                                    setSubmitting(false);
-                                  } catch (error) {
-                                    console.error("Error submitting flag:", error);
-                                    setFlagStatus("incorrect");
-                                    setSubmitting(false);
-                                  }
-                                }}
-                              >
-                                {submitting ? "Submitting..." : "Submit"}
-                              </Button>
+                    {selectedChallenge &&
+                      selectedChallenge._id === challenge._id && (
+                        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+                          <DialogHeader className="pb-4">
+                            <DialogTitle className="text-2xl break-words">
+                              {selectedChallenge.title}
+                            </DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-6 px-1 overflow-hidden">
+                            <p className="text-muted-foreground whitespace-pre-wrap break-words">
+                              {selectedChallenge.description}
+                            </p>
+                            {selectedChallenge.fileUrls && selectedChallenge.fileUrls.length > 0 && (
+                              <div className="space-y-2">
+                                <Label className="text-sm font-medium">Attachments</Label>
+                                <div className="space-y-1 flex gap-2">
+                                  {selectedChallenge.fileUrls.map((url, index) => (
+                                    <a
+                                      key={url}
+                                      href={url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-primary hover:underline"
+                                    >
+                                      <Button className="cursor-pointer">Attachment {index + 1}</Button>
+                                    </a>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            <div className="flex flex-wrap gap-3 text-sm items-center">
+                              <span className="text-primary font-medium bg-primary/10 px-3 py-1.5 rounded-full">
+                                {selectedChallenge.points} points
+                              </span>
+                              <span className="text-muted-foreground">
+                                Category: {selectedChallenge.category}
+                              </span>
+                              <span className="text-muted-foreground">
+                                Solved by {selectedChallenge.solveCount} teams
+                              </span>
                             </div>
-                            {flagStatus === "correct" && <p className="text-green-500 text-sm">Correct flag! Challenge completed!</p>}
-                            {flagStatus === "incorrect" && <p className="text-red-500 text-sm">{error}</p>}
+                            <div className="space-y-4 pt-4 border-t">
+                              <Label
+                                htmlFor="flag"
+                                className="text-sm font-medium"
+                              >
+                                Submit Flag
+                              </Label>
+                              <div className="flex gap-2">
+                                <Input
+                                  id="flag"
+                                  value={flagInput}
+                                  onChange={(e) => {
+                                    setFlagInput(e.target.value);
+                                    setFlagStatus("");
+                                  }}
+                                  placeholder="SKICTF{...}"
+                                  className="flex-1"
+                                />
+                                <Button
+                                  disabled={submitting}
+                                  onClick={async () => {
+                                    try {
+                                      setSubmitting(true);
+                                      const response = await fetch(
+                                        `/api/challenges/${selectedChallenge._id}/submit`,
+                                        {
+                                          method: "POST",
+                                          headers: {
+                                            "Content-Type": "application/json",
+                                          },
+                                          body: JSON.stringify({
+                                            flag: flagInput,
+                                          }),
+                                        }
+                                      );
+
+                                      if (response.ok) {
+                                        setFlagStatus("correct");
+                                      } else {
+                                        const r = await response.json();
+                                        setError(r.message);
+                                        setFlagStatus("incorrect");
+                                      }
+                                      setSubmitting(false);
+                                    } catch (error) {
+                                      console.error(
+                                        "Error submitting flag:",
+                                        error
+                                      );
+                                      setFlagStatus("incorrect");
+                                      setSubmitting(false);
+                                    }
+                                  }}
+                                >
+                                  {submitting ? "Submitting..." : "Submit"}
+                                </Button>
+                              </div>
+                              {flagStatus === "correct" && (
+                                <p className="text-green-500 text-sm">
+                                  Correct flag! Challenge completed!
+                                </p>
+                              )}
+                              {flagStatus === "incorrect" && (
+                                <p className="text-red-500 text-sm">{error}</p>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </DialogContent>
-                    )}
+                        </DialogContent>
+                      )}
                   </Dialog>
                 ))}
             </div>
