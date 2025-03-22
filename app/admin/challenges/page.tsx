@@ -11,6 +11,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 
 interface Challenge {
@@ -144,81 +145,16 @@ export default function AdminChallengePage() {
 
   return (
     <div className="min-h-screen bg-background px-4 py-16">
-      <div className="container mx-auto max-w-4xl">
+      <div className="container mx-auto max-w-7xl">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
             Challenge Management
           </h1>
-          <Button onClick={() => setShowDialog(true)}>Add Challenge</Button>
-        </div>
-
-        {categories.map((category) => (
-          <div key={category} className="mb-8">
-            <h2 className="text-2xl font-semibold text-primary mb-4">
-              {category}
-            </h2>
-            <div className="space-y-4">
-              {challenges
-                .filter((challenge) => challenge.category === category)
-                .map((challenge) => (
-                  <div
-                    key={challenge._id}
-                    className="bg-card p-6 rounded-lg shadow-lg space-y-2 border"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h2 className="text-2xl font-semibold">
-                          {challenge.title}
-                        </h2>
-                        <p className="text-muted-foreground mt-1">
-                          {challenge.description}
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          onClick={() => handleEdit(challenge)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          onClick={() => handleDelete(challenge._id)}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="flex gap-4 text-sm">
-                      <span className="text-primary">
-                        {challenge.points} points
-                      </span>
-                      <span className="text-muted-foreground">
-                        Category: {challenge.category}
-                      </span>
-                    </div>
-                    <div className="flex gap-2">
-                      {challenge.fileUrls.map((url, index) => (
-                        <a
-                          key={index}
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-primary hover:underline"
-                        >
-                          Attachment {index + 1}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-            </div>
-
-            <Dialog open={showDialog} onOpenChange={(open) => {
-              if (!open) setEditingChallenge(null);
-              setShowDialog(open);
-            }}>
-              <DialogContent className="sm:max-w-[425px]">
+          <Dialog open={showDialog} onOpenChange={setShowDialog}>
+            <DialogTrigger asChild>
+              <Button onClick={() => setShowDialog(true)}>Add Challenge</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                   <DialogTitle>
                     {editingChallenge ? "Edit Challenge" : "Add New Challenge"}
@@ -280,7 +216,7 @@ export default function AdminChallengePage() {
                   </div>
 
                   <div>
-                    <Label>File URLs (GitHub)</Label>
+                    <Label>File URLs</Label>
                     {[0, 1, 2].map((index) => (
                       <Input
                         key={index}
@@ -321,6 +257,62 @@ export default function AdminChallengePage() {
                 </form>
               </DialogContent>
             </Dialog>
+          </div>
+
+        {categories.map((category) => (
+          <div key={category} className="mb-8">
+            <h2 className="text-2xl font-semibold text-primary mb-4">
+              {category}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {challenges
+                .filter((challenge) => challenge.category === category)
+                .sort((a, b) => a.points - b.points)
+                .map((challenge) => (
+                  <div
+                    key={challenge._id}
+                    className="p-6 rounded-lg shadow-lg space-y-3 border bg-card"
+                  >
+                    <div className="space-y-2">
+                      <h2 className="text-2xl font-semibold break-words">
+                        {challenge.title}
+                      </h2>
+                      <p className="text-muted-foreground break-words line-clamp-2">
+                        {challenge.description}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-3 text-sm">
+                      <span className="text-primary font-medium">
+                        {challenge.points} points
+                      </span>
+                      <span className="text-muted-foreground">
+                        Category: {challenge.category}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm">
+                      {challenge.fileUrls && challenge.fileUrls.length > 0 && (
+                        <span className="text-muted-foreground">
+                          {challenge.fileUrls.length} file(s) attached
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex gap-2 pt-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => handleEdit(challenge)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={() => handleDelete(challenge._id)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+            </div>
           </div>
         ))}
       </div>

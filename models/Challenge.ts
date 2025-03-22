@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
 
 const ChallengeSchema = new mongoose.Schema({
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
   title: {
     type: String,
     required: true,
@@ -22,12 +27,7 @@ const ChallengeSchema = new mongoose.Schema({
   fileUrls: {
     type: [{
       type: String,
-      validate: {
-        validator: function(v: string) {
-          return v.startsWith('https://github.com/') || v.startsWith('https://raw.githubusercontent.com/');
-        },
-        message: 'File URL must be a GitHub link'
-      }
+      required: true
     }],
     required: true,
     default: []

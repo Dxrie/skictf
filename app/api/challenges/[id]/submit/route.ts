@@ -20,7 +20,7 @@ export async function POST(
 
     // Check if user has a team
     const user = await User.findById(session.user.id);
-    if (!user?.teamId) {
+    if (!user?.teamId && !user?.isAdmin) {
       return NextResponse.json(
         {message: "You must be in a team to submit flags"},
         {status: 400}
@@ -40,7 +40,7 @@ export async function POST(
 
     // Check if team has already solved this challenge
     const team = await Team.findById(user.teamId);
-    if (!team) {
+    if (!team && !user.isAdmin) {
       return NextResponse.json({message: "Team not found"}, {status: 404});
     }
 

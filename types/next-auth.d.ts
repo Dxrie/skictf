@@ -6,12 +6,14 @@ declare module "next-auth" {
     user: {
       id: string;
       isAdmin: boolean;
+      teamId?: mongoose.Types.ObjectId;
     } & DefaultSession["user"];
   }
 
   interface User extends DefaultUser {
     id: string;
     isAdmin: boolean;
+    teamId?: mongoose.Types.ObjectId;
   }
 }
 

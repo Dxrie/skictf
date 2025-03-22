@@ -21,7 +21,13 @@ interface Challenge {
   category: string;
   fileUrls: string[];
   solveCount: number;
+  solves: string[];
   flag?: string;
+  isSolved?: boolean;
+  author: {
+    _id: string;
+    username: string;
+  };
 }
 
 export default function ChallengePage() {
@@ -76,10 +82,15 @@ export default function ChallengePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {challenges
                 .filter((challenge) => challenge.category === category)
+                .sort((a, b) => a.points - b.points)
                 .map((challenge) => (
                   <div
                     key={challenge._id}
-                    className="bg-card p-6 rounded-lg shadow-lg space-y-3 hover:shadow-xl transition-shadow duration-200 cursor-pointer border"
+                    className={`p-6 rounded-lg shadow-lg space-y-3 hover:shadow-xl transition-shadow duration-200 cursor-pointer border ${
+                      challenge.solves.includes(session?.user.teamId)
+                        ? "bg-green-100/10 border-green-500/50"
+                        : "bg-card"
+                    }`}
                     onClick={() => setSelectedChallenge(challenge)}
                   >
                     <div className="space-y-2">
@@ -108,6 +119,9 @@ export default function ChallengePage() {
                       <span className="text-muted-foreground">
                         Category: {challenge.category}
                       </span>
+                      <span className="text-muted-foreground">
+                        Created by: {challenge.author?.username}
+                      </span>
                     </div>
                     <div className="flex items-center gap-4 text-sm">
                       <span className="text-muted-foreground">
@@ -115,37 +129,39 @@ export default function ChallengePage() {
                       </span>
                     </div>
                     {challenge.fileUrls && challenge.fileUrls.length > 0 && (
-                        <div className="pt-2">
-                          {session ? (
-                            <div className="flex flex-wrap gap-2">
-                              {challenge.fileUrls.map((url, index) => (
-                                <Button
-                                  key={index}
-                                  variant="outline"
-                                  className="sm:w-auto"
-                                  asChild
+                      <div className="pt-2">
+                        {session ? (
+                          <div className="flex flex-wrap gap-2">
+                            {challenge.fileUrls.map((url, index) => (
+                              <Button
+                                key={index}
+                                variant="outline"
+                                className="sm:w-auto"
+                                asChild
+                              >
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
                                 >
-                                  <a
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    Download File {index + 1}
-                                  </a>
-                                </Button>
-                              ))}
-                            </div>
-                          ) : (
-                            <div className="text-sm text-muted-foreground">
-                              <Link href="/auth/login" className="text-primary hover:underline">
-                                Sign in
-                              </Link>
-                              {" "}
-                              to access challenge files
-                            </div>
-                          )}
-                        </div>
-                      )}
+                                  Download File {index + 1}
+                                </a>
+                              </Button>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-sm text-muted-foreground">
+                            <Link
+                              href="/auth/login"
+                              className="text-primary hover:underline"
+                            >
+                              Sign in
+                            </Link>{" "}
+                            to access challenge files
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
             </div>
@@ -160,39 +176,63 @@ export default function ChallengePage() {
                 }
               }}
             >
-              <DialogContent className="sm:max-w-[425px]">
+              <DialogContent
+                className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto overflow-x-hidden"
+                onInteractOutside={(e) => e.preventDefault()}
+              >
                 {selectedChallenge && (
                   <>
-                    <DialogHeader>
-                      <DialogTitle>{selectedChallenge.title}</DialogTitle>
+                    <DialogHeader className="pb-4">
+                      <DialogTitle className="text-2xl break-words">
+                        {selectedChallenge.title}
+                      </DialogTitle>
                     </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-muted-foreground">
+                    <div className="space-y-6 px-1 overflow-scroll">
+                      <div className="space-y-3">
+                        <p className="text-muted-foreground whitespace-pre-wrap break-words">
                           {selectedChallenge.description}
                         </p>
                       </div>
-                      <div className="flex gap-4 text-sm">
-                        <span className="text-primary font-medium">
+                      <div className="flex flex-wrap gap-3 text-sm items-center">
+                        <span className="text-primary font-medium bg-primary/10 px-3 py-1.5 rounded-full">
                           {selectedChallenge.points} points
+                        </span>
+                        <span className="text-primary font-medium bg-primary/10 px-3 py-1.5 rounded-full">
+                          {selectedChallenge.points >= 50 &&
+                          selectedChallenge.points < 250
+                            ? "Easy"
+                            : selectedChallenge.points >= 250 &&
+                              selectedChallenge.points < 500
+                            ? "Medium"
+                            : selectedChallenge.points >= 500 &&
+                              selectedChallenge.points < 1000
+                            ? "Hard"
+                            : selectedChallenge.points >= 1000
+                            ? "Impossible"
+                            : ""}
                         </span>
                         <span className="text-muted-foreground">
                           Category: {selectedChallenge.category}
                         </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
                         <span className="text-muted-foreground">
                           Solved by {selectedChallenge.solveCount} teams
                         </span>
+                        <span className="text-muted-foreground bg-muted/10 px-3 py-1.5 rounded-full">
+                          Created by: {selectedChallenge.author?.username}
+                        </span>
                       </div>
                       {selectedChallenge.fileUrls.length > 0 && (
-                        <div>
+                        <div className="space-y-3">
+                          <h3 className="text-sm font-medium">
+                            Challenge Files
+                          </h3>
                           {session ? (
                             <div className="flex flex-wrap gap-2">
                               {selectedChallenge.fileUrls.map((url, index) => (
                                 <Button
                                   key={index}
                                   variant="outline"
+                                  size="sm"
                                   className="w-full sm:w-auto"
                                   asChild
                                 >
@@ -207,66 +247,78 @@ export default function ChallengePage() {
                               ))}
                             </div>
                           ) : (
-                            <div className="text-sm text-muted-foreground">
-                              <Link href="/auth/login" className="text-primary hover:underline">
+                            <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">
+                              <Link
+                                href="/auth/login"
+                                className="text-primary hover:underline"
+                              >
                                 Sign in
-                              </Link>
-                              {" "}
+                              </Link>{" "}
                               to access challenge files
                             </div>
                           )}
                         </div>
                       )}
-                      <div className="space-y-2">
-                        <Label htmlFor="flag">Submit Flag</Label>
-                        <div className="flex gap-2">
-                          <Input
-                            id="flag"
-                            value={flagInput}
-                            onChange={(e) => {
-                              setFlagInput(e.target.value);
-                              setFlagStatus("");
-                            }}
-                            placeholder="SKICTF{...}"
-                          />
-                          <Button
-                            onClick={async () => {
-                              try {
-                                const response = await fetch(
-                                  `/api/challenges/${selectedChallenge._id}/submit`,
-                                  {
-                                    method: "POST",
-                                    headers: {
-                                      "Content-Type": "application/json",
-                                    },
-                                    body: JSON.stringify({flag: flagInput}),
-                                  }
-                                );
+                      <div className="space-y-4 pt-4 border-t">
+                        <div className="space-y-3">
+                          <Label htmlFor="flag" className="text-sm font-medium">
+                            Submit Flag
+                          </Label>
+                          <div className="flex gap-2">
+                            <Input
+                              id="flag"
+                              value={flagInput}
+                              onChange={(e) => {
+                                setFlagInput(e.target.value);
+                                setFlagStatus("");
+                              }}
+                              placeholder="SKICTF{...}"
+                              className="flex-1"
+                            />
+                            <Button
+                              onClick={async () => {
+                                try {
+                                  const response = await fetch(
+                                    `/api/challenges/${selectedChallenge._id}/submit`,
+                                    {
+                                      method: "POST",
+                                      headers: {
+                                        "Content-Type": "application/json",
+                                      },
+                                      body: JSON.stringify({flag: flagInput}),
+                                    }
+                                  );
 
-                                if (response.ok) {
-                                  setFlagStatus("correct");
-                                } else {
-                                  const r = await response.json();
-                                  setError(r.message);
+                                  if (response.ok) {
+                                    setFlagStatus("correct");
+                                  } else {
+                                    const r = await response.json();
+                                    setError(r.message);
+                                    setFlagStatus("incorrect");
+                                  }
+                                } catch (error) {
+                                  console.error(
+                                    "Error submitting flag:",
+                                    error
+                                  );
                                   setFlagStatus("incorrect");
                                 }
-                              } catch (error) {
-                                console.error("Error submitting flag:", error);
-                                setFlagStatus("incorrect");
-                              }
-                            }}
-                          >
-                            Submit
-                          </Button>
+                              }}
+                            >
+                              Submit
+                            </Button>
+                          </div>
+                          {flagStatus === "correct" && (
+                            <p className="text-green-500 text-sm bg-green-500/10 p-3 rounded-lg">
+                              Correct flag! Challenge completed!
+                            </p>
+                          )}
+                          {flagStatus === "incorrect" && (
+                            <p className="text-red-500 text-sm bg-red-500/10 p-3 rounded-lg">
+                              {error}
+                            </p>
+                          )}
                         </div>
-                        {flagStatus === "correct" && (
-                          <p className="text-green-500 text-sm">
-                            Correct flag! Challenge completed!
-                          </p>
-                        )}
-                        {flagStatus === "incorrect" && (
-                          <p className="text-red-500 text-sm">{error}</p>
-                        )}
                       </div>
                     </div>
                   </>

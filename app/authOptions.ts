@@ -34,7 +34,8 @@ const authOptions: NextAuthOptions = {
           id: user._id.toString(),
           email: user.email,
           username: user.username,
-          isAdmin: user.isAdmin, // Add this line to include the isAdmin property
+          isAdmin: user.isAdmin,
+          teamId: user.teamId?.toString() || null,
         };
       },
     }),
@@ -46,7 +47,8 @@ const authOptions: NextAuthOptions = {
     async jwt({token, user}) {
       if (user) {
         token.id = user.id;
-        token.isAdmin = user.isAdmin; // Ensure the token includes isAdmin
+        token.isAdmin = user.isAdmin;
+        token.teamId = user.teamId;
       }
       return token;
     },
@@ -54,6 +56,7 @@ const authOptions: NextAuthOptions = {
       if (token) {
         session.user.id = token.id;
         session.user.isAdmin = token.isAdmin;
+        session.user.teamId = token.teamId;
       }
       return session;
     },
