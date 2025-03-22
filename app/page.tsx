@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export default function Home() {
   return (
     <div className="bg-background min-h-dvh w-full">
@@ -14,6 +12,13 @@ export default function Home() {
 
         <p className="text-sm text-muted-foreground max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200">
           {"SKICTF{H4ppy_H4ck1ng_H4ck3r!}"}
+        </p>
+
+        <p className="text-lg font-semibold text-red-500 max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-400">
+          Note: You must submit a write-up for every challenge you solve. No
+          write-up means no points! Write-ups will be reviewed after the
+          competition is over. Write-ups will also affect your rank on the
+          leaderboard. Great write-ups will get you a lot of points!
         </p>
       </main>
 
@@ -38,7 +43,6 @@ export default function Home() {
               Digital Forensics
             </h3>
             <p className="text-muted-foreground">
-              {" "}
               Uncover, analyze, and recover hidden or deleted data from digital
               devices.
             </p>
