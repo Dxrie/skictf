@@ -6,7 +6,10 @@ import Challenge from "@/models/Challenge";
 import {User} from "@/models/User";
 import {Team} from "@/models/Team";
 
-export async function POST(request: Request, context: { params: Promise<{id: string}> }) {
+export async function POST(
+  request: Request,
+  context: {params: Promise<{id: string}>}
+) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -43,7 +46,10 @@ export async function POST(request: Request, context: { params: Promise<{id: str
 
     // Validate flag
     const prefix = "SKICTF{";
-    if (!flag.startsWith(prefix, 0) && !flag.toUpperCase().startsWith(prefix.toUpperCase(), 0)) {
+    if (
+      !flag.startsWith(prefix, 0) &&
+      !flag.toUpperCase().startsWith(prefix.toUpperCase(), 0)
+    ) {
       console.log("Incorrect flag format submitted by team:", team.name);
       return NextResponse.json({message: "Invalid flag format"}, {status: 400});
     }
@@ -59,7 +65,7 @@ export async function POST(request: Request, context: { params: Promise<{id: str
     // Update challenge solve count
     const chall = await Challenge.findById((await context.params).id);
 
-    if (!chall.solves.includes(user.teamId)) {
+    if (!chall.solves.includes(user.teamId) && !user.isAdmin) {
       chall.solves.push(user.teamId);
       chall.solveCount++;
       await chall.save();
