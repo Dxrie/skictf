@@ -241,7 +241,7 @@ export default function ChallengePage() {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                   >
-                                    Download File {index + 1}
+                                    Attachment {index + 1}
                                   </a>
                                 </Button>
                               ))}
