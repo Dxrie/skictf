@@ -45,6 +45,7 @@ export default function ChallengePage() {
   );
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [categories, setCategories] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const groupChallengesByCategory = (challenges: Challenge[]) => {
     const uniqueCategories = Array.from(
@@ -70,9 +71,18 @@ export default function ChallengePage() {
       }
     } catch (error) {
       console.error("Error fetching challenges:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-primary">Loading challenges...</div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-background px-4 py-16">
       <div className="container mx-auto max-w-7xl">

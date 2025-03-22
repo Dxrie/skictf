@@ -37,6 +37,7 @@ export default function TeamPage() {
     if (!session) return router.push('/auth/login'); // Redirect to login if no session exists
 
     console.log(session);
+    setIsLoading(true); // Set loading state to true before fetching
     fetchTeam();
   }, [session]);
 
@@ -49,6 +50,8 @@ export default function TeamPage() {
       }
     } catch (error) {
       console.error('Error fetching team:', error);
+    } finally {
+      setIsLoading(false); // Set loading state to false after fetching
     }
   };
 
@@ -124,7 +127,9 @@ export default function TeamPage() {
           Team Management
         </h1>
 
-        {team ? (
+        {isLoading ? (
+          <p className="text-center text-muted-foreground">Loading team data...</p>
+        ) : team ? (
           <div className="bg-card p-8 rounded-lg shadow-lg border">
             <h2 className="text-2xl font-semibold mb-4 text-primary">{team.name}</h2>
             <h5 className="text-sm text-muted-foreground">ID: {team._id}</h5>
