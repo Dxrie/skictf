@@ -1,7 +1,9 @@
-import { Team } from "@/models/Team";
+import connectDB from "@/lib/db";
+import {Team} from "@/models/Team";
 
 export async function GET() {
-    const teams = await Team.find().sort({ score: -1 });
+  await connectDB();
+  const teams = await Team.find().sort({score: -1});
 
-    return Response.json(teams);
+  return Response.json(teams);
 }
