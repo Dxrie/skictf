@@ -187,7 +187,7 @@ export default function ChallengePage() {
                         {selectedChallenge.title}
                       </DialogTitle>
                     </DialogHeader>
-                    <div className="space-y-6 px-1 overflow-scroll">
+                    <div className="space-y-6 px-1 overflow-hidden">
                       <div className="space-y-3">
                         <p className="text-muted-foreground whitespace-pre-wrap break-words">
                           {selectedChallenge.description}

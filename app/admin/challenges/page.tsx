@@ -150,7 +150,15 @@ export default function AdminChallengePage() {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
             Challenge Management
           </h1>
-          <Dialog open={showDialog} onOpenChange={setShowDialog}>
+          <Dialog open={showDialog} onOpenChange={(open) => {
+            if (!open) {
+              setEditingChallenge(null);
+              setShowDialog(false);
+            } else {
+              setEditingChallenge(editingChallenge);
+              setShowDialog(true);
+            }
+          }}>
             <DialogTrigger asChild>
               <Button onClick={() => setShowDialog(true)}>Add Challenge</Button>
             </DialogTrigger>
