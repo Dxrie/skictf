@@ -42,7 +42,16 @@ export async function POST(request: Request, context: { params: Promise<{id: str
     }
 
     // Validate flag
-    if (flag !== challenge.flag) {
+    const prefix = "SKICTF{";
+    if (!flag.startsWith(prefix, 0) && !flag.toUpperCase().startsWith(prefix.toUpperCase(), 0)) {
+      console.log("Incorrect flag format submitted by team:", team.name);
+      return NextResponse.json({message: "Invalid flag format"}, {status: 400});
+    }
+
+    // Compare the rest of the flag case-sensitively
+    const submittedContent = flag.slice(prefix.length);
+    const correctContent = challenge.flag.slice(prefix.length);
+    if (submittedContent !== correctContent) {
       console.log("Incorrect flag submitted by team:", team.name);
       return NextResponse.json({message: "Incorrect flag"}, {status: 400});
     }
