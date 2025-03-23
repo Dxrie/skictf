@@ -7,6 +7,9 @@ export interface IUser extends mongoose.Document {
   username: string;
   teamId?: mongoose.Types.ObjectId;
   isAdmin: boolean;
+  isVerified: boolean;
+  verificationToken: string;
+  verificationTokenExpires: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -18,6 +21,18 @@ const userSchema = new mongoose.Schema<IUser>(
       unique: true,
       trim: true,
       lowercase: true,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      required: false,
+    },
+    verificationTokenExpires: {
+      type: Date,
+      required: false,
     },
     isAdmin: {
       type: Boolean,

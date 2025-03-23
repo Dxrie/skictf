@@ -24,6 +24,10 @@ const authOptions: NextAuthOptions = {
           throw new Error("User not found");
         }
 
+        if (!user.isVerified) {
+          throw new Error("Please verify your email before logging in");
+        }
+
         const isValid = await user.comparePassword(credentials.password);
 
         if (!isValid) {

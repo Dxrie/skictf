@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import { User } from "@/models/User";
+import crypto from "crypto";
+import { sendVerificationEmail } from "@/lib/email";
 
 export async function POST(req: Request) {
   try {
@@ -27,12 +29,23 @@ export async function POST(req: Request) {
       );
     }
 
+    // Generate verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationTokenExpires = new Date();
+    verificationTokenExpires.setHours(verificationTokenExpires.getHours() + 24);
+
     // Create new user
     const user = await User.create({
       email,
       password,
       username,
+      verificationToken,
+      verificationTokenExpires,
+      isVerified: false
     });
+
+    // Send verification email
+    await sendVerificationEmail(email, verificationToken);
 
     return NextResponse.json(
       { message: "User registered successfully", userId: user._id },
