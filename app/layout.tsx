@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "SKICTF - Capture The Flag Competition | Sekolah Kristen Immanuel",
   description: "SKICTF is a Capture the Flag event for the Sekolah Kristen Immanuel held by SMK Kristen Immanuel. Join us to test your cybersecurity skills and compete with other students.",
-  keywords: ["CTF", "Capture The Flag", "Cybersecurity", "Competition", "Sekolah Kristen Immanuel", "SMK Kristen Immanuel"],
+  keywords: ["CTF", "Capture The Flag", "Cybersecurity", "Competition", "Sekolah Kristen Immanuel", "SMK Kristen Immanuel", "SKICTF", "SKI CTF", "CTF SKI"],
   authors: [{ name: "SMK Kristen Immanuel" }],
   openGraph: {
     title: "SKICTF - Capture The Flag Competition | Sekolah Kristen Immanuel",
