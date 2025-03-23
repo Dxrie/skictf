@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SKI CTF",
-  description: "SKI CTF",
+  title: "SKICTF",
+  description: "SKICTF is a Capture the Flag event for the Sekolah Kristen Immanuel held by SMK Kristen Immanuel.",
 };
 
 export default function RootLayout({
