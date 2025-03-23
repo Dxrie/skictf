@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IUser } from "./User";
+import {IUser} from "./User";
 
 export interface ITeam extends mongoose.Document {
   name: string;
@@ -8,6 +8,7 @@ export interface ITeam extends mongoose.Document {
   createdAt: Date;
   updatedAt: Date;
   score: number;
+  showInLeaderboard: boolean;
 }
 
 const teamSchema = new mongoose.Schema<ITeam>(
@@ -19,26 +20,32 @@ const teamSchema = new mongoose.Schema<ITeam>(
       trim: true,
     },
     members: {
-      type: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-      }]
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+      ],
     },
     leader: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "Team leader is required"]
+      required: [true, "Team leader is required"],
     },
     score: {
       type: Number,
-      default: 0 
-    }
+      default: 0,
+    },
+    showInLeaderboard: {
+      type: Boolean,
+      default: true,
+    },
   },
-  { timestamps: true }
+  {timestamps: true}
 );
 
 // Middleware to ensure leader inclusion
-teamSchema.pre("save", async function(next) {
+teamSchema.pre("save", async function (next) {
   // Ensure leader is included in members
   if (!this.members.includes(this.leader)) {
     this.members.push(this.leader);
@@ -46,4 +53,5 @@ teamSchema.pre("save", async function(next) {
   next();
 });
 
-export const Team = mongoose.models.Team || mongoose.model<ITeam>("Team", teamSchema);
+export const Team =
+  mongoose.models.Team || mongoose.model<ITeam>("Team", teamSchema);

@@ -4,6 +4,7 @@ import {Team} from "@/models/Team";
 import {User} from "@/models/User";
 import {getServerSession} from "next-auth";
 import authOptions from "@/app/authOptions";
+import {PublishModel} from "@/models/Publish";
 
 // Create a new team
 export async function POST(req: Request) {
@@ -16,6 +17,18 @@ export async function POST(req: Request) {
     if (session.user.isAdmin) {
       return NextResponse.json(
         {message: "Admin cannot create a team"},
+        {status: 400}
+      );
+    }
+
+    const publish = await PublishModel.findOne({publish: true});
+
+    if (!publish) {
+      return NextResponse.json(
+        {
+          message:
+            "Challenges are not published yet and you cannot create a team",
+        },
         {status: 400}
       );
     }
