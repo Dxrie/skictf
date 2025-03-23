@@ -1,30 +1,32 @@
-'use client';
+"use client";
 
-import {useEffect, useState} from 'react';
-import {useRouter, useSearchParams} from 'next/navigation';
-import {Button} from '@/components/ui/button';
-import Link from 'next/link';
+import {Suspense, useEffect, useState} from "react";
+import {useRouter, useSearchParams} from "next/navigation";
+import {Button} from "@/components/ui/button";
+import Link from "next/link";
 
-export default function VerifyPage() {
+function VerificationContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get('token');
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-  const [message, setMessage] = useState('');
+  const token = searchParams.get("token");
+  const [status, setStatus] = useState<"loading" | "success" | "error">(
+    "loading"
+  );
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (!token) {
-      setStatus('error');
-      setMessage('Invalid verification link');
+      setStatus("error");
+      setMessage("Invalid verification link");
       return;
     }
 
     const verifyEmail = async () => {
       try {
-        const response = await fetch('/api/auth/verify', {
-          method: 'POST',
+        const response = await fetch("/api/auth/verify", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({token}),
         });
@@ -32,17 +34,17 @@ export default function VerifyPage() {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || 'Verification failed');
+          throw new Error(data.message || "Verification failed");
         }
 
-        setStatus('success');
-        setMessage('Your email has been verified successfully!');
+        setStatus("success");
+        setMessage("Your email has been verified successfully!");
       } catch (error) {
-        setStatus('error');
+        setStatus("error");
         if (error instanceof Error) {
           setMessage(error.message);
         } else {
-          setMessage('An error occurred during verification');
+          setMessage("An error occurred during verification");
         }
       }
     };
@@ -53,33 +55,49 @@ export default function VerifyPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-md space-y-8 bg-card p-8 rounded-lg shadow-lg text-center">
-        {status === 'loading' && (
+        {status === "loading" && (
           <div>
             <h2 className="text-2xl font-bold">Verifying your email...</h2>
-            <p className="mt-2 text-muted-foreground">Please wait while we verify your email address.</p>
+            <p className="mt-2 text-muted-foreground">
+              Please wait while we verify your email address.
+            </p>
           </div>
         )}
 
-        {status === 'success' && (
+        {status === "success" && (
           <div>
             <h2 className="text-2xl font-bold text-green-600">{message}</h2>
-            <p className="mt-4 text-muted-foreground">You can now sign in to your account.</p>
+            <p className="mt-4 text-muted-foreground">
+              You can now sign in to your account.
+            </p>
             <Link href="/auth/login">
               <Button className="mt-4">Sign in</Button>
             </Link>
           </div>
         )}
 
-        {status === 'error' && (
+        {status === "error" && (
           <div>
-            <h2 className="text-2xl font-bold text-red-600">Verification Failed</h2>
+            <h2 className="text-2xl font-bold text-red-600">
+              Verification Failed
+            </h2>
             <p className="mt-2 text-muted-foreground">{message}</p>
             <Link href="/auth/login">
-              <Button variant="ghost" className="mt-4">Back to Sign in</Button>
+              <Button variant="ghost" className="mt-4">
+                Back to Sign in
+              </Button>
             </Link>
           </div>
         )}
       </div>
     </div>
+  );
+}
+
+export default function VerifyPage() {
+  return (
+    <Suspense>
+      <VerificationContent />
+    </Suspense>
   );
 }
