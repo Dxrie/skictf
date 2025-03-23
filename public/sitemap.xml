@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://skictf.com/</loc>
+    <loc>https://skictf.vercel.app/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://skictf.com/challenges</loc>
+    <loc>https://skictf.vercel.app/challenges</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://skictf.com/leaderboards</loc>
+    <loc>https://skictf.vercel.app/leaderboards</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://skictf.com/team</loc>
+    <loc>https://skictf.vercel.app/team</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>

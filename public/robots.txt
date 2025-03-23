@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://skictf.com/sitemap.xml
+Sitemap: https://skictf.vercel.app/sitemap.xml
