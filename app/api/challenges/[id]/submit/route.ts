@@ -58,7 +58,7 @@ export async function POST(
     const submittedContent = flag.slice(prefix.length);
     const correctContent = challenge.flag.slice(prefix.length);
     if (submittedContent !== correctContent) {
-      console.log("Incorrect flag submitted by team:", team.name);
+      console.log("Incorrect flag submitted by team:", team?.name ?? "Admin");
       return NextResponse.json({message: "Incorrect flag"}, {status: 400});
     }
 
