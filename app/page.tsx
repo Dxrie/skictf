@@ -60,11 +60,19 @@ export default function Home() {
           <div className="group p-6 rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
             <div className="mb-4 text-primary text-2xl">💻</div>
             <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
+              Binary Exploitation
+            </h3>
+            <p className="text-muted-foreground">
+              Exploit vulnerabilities in binary programs and understand memory corruption techniques.
+            </p>
+          </div>
+          <div className="group p-6 rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div className="mb-4 text-primary text-2xl">🔢</div>
+            <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
               Reverse Engineering
             </h3>
             <p className="text-muted-foreground">
-              Analyze binaries, understand program flow, and uncover hidden
-              functionality.
+              Analyze binaries, understand program flow, and uncover hidden functionality.
             </p>
           </div>
           <div className="group p-6 rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
@@ -73,8 +81,7 @@ export default function Home() {
               Miscellaneous
             </h3>
             <p className="text-muted-foreground">
-              Challenges that don't fit into a single category—think OSINT,
-              scripting, steganography, and more!
+              Challenges that don't fit into a single category—think OSINT, scripting, steganography, and more!
             </p>
           </div>
         </div>
