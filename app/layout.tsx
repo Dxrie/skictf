@@ -30,14 +30,14 @@ export const metadata: Metadata = {
     "SKI CTF",
     "CTF SKI",
   ],
-  authors: [{name: "SMK Kristen Immanuel"}],
+  authors: [{name: "Dxrie"}],
   openGraph: {
     title: "SKICTF - Capture The Flag Competition | Sekolah Kristen Immanuel",
     description:
       "SKICTF is a Capture the Flag event for the Sekolah Kristen Immanuel held by SMK Kristen Immanuel. Join us to test your cybersecurity skills and compete with other students.",
     type: "website",
     locale: "en_US",
-    url: "https://skictf.com",
+    url: "https://skictf.vercel.app",
   },
   twitter: {
     card: "summary_large_image",
