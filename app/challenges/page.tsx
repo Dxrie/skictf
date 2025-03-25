@@ -166,7 +166,7 @@ export default function ChallengePage() {
                             Category: {challenge.category}
                           </span>
                           <span className="text-muted-foreground">
-                            Created by: {challenge.author?.username}
+                            Author: {challenge.author?.username}
                           </span>
                         </div>
                         <div className="flex items-center gap-4 text-sm">
