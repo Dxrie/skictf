@@ -6,11 +6,7 @@ import {usePathname} from "next/navigation";
 import {useSession, signOut} from "next-auth/react";
 import {Button} from "@/components/ui/button";
 import {Menu} from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -48,7 +44,9 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`transition-colors hover:text-primary ${isActive(item.href) ? "text-primary" : "text-muted-foreground"}`}
+                className={`transition-colors hover:text-primary ${
+                  isActive(item.href) ? "text-primary" : "text-muted-foreground"
+                }`}
               >
                 {item.name}
               </Link>
@@ -99,7 +97,11 @@ export default function Navbar() {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`flex items-center rounded-md px-4 py-2.5 text-sm font-medium ${isActive(item.href) ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"}`}
+                      className={`flex items-center rounded-md px-4 py-2.5 text-sm font-medium ${
+                        isActive(item.href)
+                          ? "bg-accent text-accent-foreground"
+                          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                      }`}
                     >
                       {item.name}
                     </Link>

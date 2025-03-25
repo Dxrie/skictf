@@ -131,7 +131,7 @@ export default function ChallengePage() {
                     <DialogTrigger asChild>
                       <div
                         className={`p-6 rounded-lg shadow-lg space-y-3 hover:shadow-xl transition-shadow duration-200 cursor-pointer border ${
-                          challenge.solves.includes(session?.user.teamId)
+                          challenge.isSolved
                             ? "bg-green-100/10 border-green-500/50"
                             : "bg-card"
                         }`}
@@ -263,6 +263,17 @@ export default function ChallengePage() {
 
                                       if (response.ok) {
                                         setFlagStatus("correct");
+                                        setChallenges((prevChallenges) =>
+                                          prevChallenges.map((c) =>
+                                            c._id === selectedChallenge._id
+                                              ? {
+                                                  ...c,
+                                                  isSolved: true,
+                                                  solveCount: c.solveCount + 1,
+                                                }
+                                              : c
+                                          )
+                                        );
                                       } else {
                                         const r = await response.json();
                                         setError(r.message);
