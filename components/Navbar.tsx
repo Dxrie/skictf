@@ -19,13 +19,15 @@ export default function Navbar() {
         {name: "Leaderboard", href: "/leaderboards"},
         {name: "Team", href: "/team"},
         {name: "Discord", href: "https://discord.gg/NpV655hg97"},
-        {name: "Admin", href: "/admin/challenges"},
+        // {name: "Survey", href: "/survey"},
+        {name: "Admin", href: "/admin"},
       ]
     : [
         {name: "Challenges", href: "/challenges"},
         {name: "Leaderboard", href: "/leaderboards"},
         {name: "Team", href: "/team"},
         {name: "Discord", href: "https://discord.gg/NpV655hg97"},
+        {name: "Survey", href: "/survey"},
       ];
 
   const isActive = (path: string) => pathname === path;
