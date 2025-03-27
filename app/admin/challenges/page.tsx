@@ -286,7 +286,7 @@ export default function AdminChallengePage() {
                       <h2 className="text-2xl font-semibold break-words">
                         {challenge.title}
                       </h2>
-                      <p className="text-muted-foreground break-words line-clamp-2">
+                      <p className="text-muted-foreground break-words line-clamp-1">
                         {challenge.description}
                       </p>
                     </div>
