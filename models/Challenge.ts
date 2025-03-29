@@ -59,16 +59,12 @@ const ChallengeSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  published: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 // Add index for better query performance
-ChallengeSchema.index({title: 1});
-ChallengeSchema.index({category: 1});
-ChallengeSchema.index({points: 1});
+ChallengeSchema.index({ title: 1 });
+ChallengeSchema.index({ category: 1 });
+ChallengeSchema.index({ points: 1 });
 
 const Challenge =
   mongoose.models.Challenge || mongoose.model("Challenge", ChallengeSchema);
