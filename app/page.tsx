@@ -10,9 +10,9 @@ export default function Home() {
           our Capture The Flag competition.
         </p>
 
-        <p className="text-sm text-muted-foreground max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200">
+        <code className="text-muted-foreground max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200">
           {"SKICTF{H4ppy_H4ck1ng_H4ck3r!}"}
-        </p>
+        </code>
 
         <p className="text-lg font-semibold text-red-500 max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-400">
           Note: You must submit a write-up for every challenge you solve. No
@@ -63,7 +63,8 @@ export default function Home() {
               Binary Exploitation
             </h3>
             <p className="text-muted-foreground">
-              Exploit vulnerabilities in binary programs and understand memory corruption techniques.
+              Exploit vulnerabilities in binary programs and understand memory
+              corruption techniques.
             </p>
           </div>
           <div className="group p-6 rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
@@ -72,7 +73,8 @@ export default function Home() {
               Reverse Engineering
             </h3>
             <p className="text-muted-foreground">
-              Analyze binaries, understand program flow, and uncover hidden functionality.
+              Analyze binaries, understand program flow, and uncover hidden
+              functionality.
             </p>
           </div>
           <div className="group p-6 rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
@@ -81,7 +83,8 @@ export default function Home() {
               Miscellaneous
             </h3>
             <p className="text-muted-foreground">
-              Challenges that don't fit into a single category—think OSINT, scripting, steganography, and more!
+              Challenges that don't fit into a single category—think OSINT,
+              scripting, and more!
             </p>
           </div>
         </div>
