@@ -1,7 +1,7 @@
 "use client";
 
-import {useState, useEffect} from "react";
-import {Button} from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,10 +9,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-import {useSession} from "next-auth/react";
-import {useRouter} from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface Challenge {
   _id: string;
@@ -33,26 +33,37 @@ interface Challenge {
 }
 
 export default function ChallengePage() {
-  const {data: session} = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(
-    null
+    null,
   );
   const [bruh, setBruh] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [flagInput, setFlagInput] = useState("");
   const [flagStatus, setFlagStatus] = useState<"" | "correct" | "incorrect">(
-    ""
+    "",
   );
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [categories, setCategories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const categoryOrder = [
+    "Miscellaneous",
+    "Binary Exploitation",
+    "Digital Forensics",
+    "Cryptography",
+    "Web Exploitation",
+    "Reverse Engineering",
+  ];
+
   const groupChallengesByCategory = (challenges: Challenge[]) => {
     const uniqueCategories = Array.from(
-      new Set(challenges.map((c) => c.category))
-    );
+      new Set(challenges.map((c) => c.category)),
+    ).sort((a, b) => {
+      return categoryOrder.indexOf(a) - categoryOrder.indexOf(b);
+    });
     setCategories(uniqueCategories);
   };
 
@@ -153,14 +164,14 @@ export default function ChallengePage() {
                             {challenge.points >= 50 && challenge.points < 250
                               ? "Easy"
                               : challenge.points >= 250 &&
-                                challenge.points < 500
-                              ? "Medium"
-                              : challenge.points >= 500 &&
-                                challenge.points < 1000
-                              ? "Hard"
-                              : challenge.points >= 1000
-                              ? "Impossible"
-                              : ""}
+                                  challenge.points < 500
+                                ? "Medium"
+                                : challenge.points >= 500 &&
+                                    challenge.points < 1000
+                                  ? "Hard"
+                                  : challenge.points >= 1000
+                                    ? "Impossible"
+                                    : ""}
                           </span>
                           <span className="text-muted-foreground">
                             Category: {challenge.category}
@@ -209,7 +220,7 @@ export default function ChallengePage() {
                                             Attachment {index + 1}
                                           </Button>
                                         </a>
-                                      )
+                                      ),
                                     )}
                                   </div>
                                 </div>
@@ -258,7 +269,7 @@ export default function ChallengePage() {
                                           body: JSON.stringify({
                                             flag: flagInput,
                                           }),
-                                        }
+                                        },
                                       );
 
                                       if (response.ok) {
@@ -271,8 +282,8 @@ export default function ChallengePage() {
                                                   isSolved: true,
                                                   solveCount: c.solveCount + 1,
                                                 }
-                                              : c
-                                          )
+                                              : c,
+                                          ),
                                         );
                                       } else {
                                         const r = await response.json();
@@ -283,7 +294,7 @@ export default function ChallengePage() {
                                     } catch (error) {
                                       console.error(
                                         "Error submitting flag:",
-                                        error
+                                        error,
                                       );
                                       setFlagStatus("incorrect");
                                       setSubmitting(false);
