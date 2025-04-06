@@ -59,6 +59,10 @@ const ChallengeSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  published: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // Add index for better query performance

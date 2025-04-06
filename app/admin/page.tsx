@@ -28,6 +28,13 @@ export default function AdminPage() {
             Challenge Management
           </Button>
           <Button
+            onClick={() => router.push("/admin/publishes")}
+            className="h-32 text-xl"
+            variant={"ghost"}
+          >
+            Challenge Publishment
+          </Button>
+          <Button
             onClick={() => router.push("/admin/surveys")}
             className="h-32 text-xl"
             variant={"ghost"}

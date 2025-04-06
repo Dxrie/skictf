@@ -1,9 +1,9 @@
-import {NextResponse} from "next/server";
-import {getServerSession} from "next-auth";
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import authOptions from "@/app/authOptions";
 import dbConnect from "@/lib/db";
 import Challenge from "@/models/Challenge";
-import {PublishModel} from "@/models/Publish";
+import { PublishModel } from "@/models/Publish";
 
 export async function GET() {
   try {
@@ -11,14 +11,15 @@ export async function GET() {
     await dbConnect();
     const challenges = await Challenge.find()
       .populate("author", "username")
-      .sort({createdAt: -1});
-    const publish = await PublishModel.findOne({publish: true});
+      .sort({ createdAt: -1 });
+    const publish = await PublishModel.findOne({ publish: true });
 
     if (session?.user?.teamId && publish) {
-      // Include solved status for the team
-      const challengesWithSolvedStatus = challenges.map((challenge) => ({
+      const filtered = challenges.filter((ch) => ch.published === true);
+
+      const challengesWithSolvedStatus = filtered.map((challenge) => ({
         ...challenge.toObject(),
-        isSolved: challenge.solves?.includes(session.user.teamId) || false,
+        isSolved: challenge.solves?.includes(session?.user.teamId) || false,
       }));
       return NextResponse.json(challengesWithSolvedStatus);
     }
@@ -32,13 +33,13 @@ export async function GET() {
     }
 
     return NextResponse.json(
-      {message: "Event hasn't started yet."},
-      {status: 400}
+      { message: "Event hasn't started yet." },
+      { status: 400 },
     );
   } catch (error) {
     return NextResponse.json(
-      {message: "Failed to fetch challenges"},
-      {status: 500}
+      { message: "Failed to fetch challenges" },
+      { status: 500 },
     );
   }
 }
@@ -47,7 +48,7 @@ export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
-      return NextResponse.json({message: "Unauthorized"}, {status: 401});
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     await dbConnect();
@@ -67,23 +68,23 @@ export async function POST(request: Request) {
       author: session.user.id,
     });
 
-    return NextResponse.json(challenge, {status: 201});
+    return NextResponse.json(challenge, { status: 201 });
   } catch (error: unknown) {
     if (error instanceof Error) {
       if ("code" in error && error.code === 11000) {
         return NextResponse.json(
-          {message: "Challenge title already exists"},
-          {status: 400}
+          { message: "Challenge title already exists" },
+          { status: 400 },
         );
       }
       if (error.name === "ValidationError") {
-        return NextResponse.json({message: error.message}, {status: 400});
+        return NextResponse.json({ message: error.message }, { status: 400 });
       }
     }
     console.error("Create challenge error:", error); // Log the error for debugging purposes
     return NextResponse.json(
-      {message: "Failed to create challenge"},
-      {status: 500}
+      { message: "Failed to create challenge" },
+      { status: 500 },
     );
   }
 }
@@ -92,33 +93,36 @@ export async function PUT(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
-      return NextResponse.json({message: "Unauthorized"}, {status: 401});
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     await dbConnect();
     const data = await request.json();
-    const {id, ...updateData} = data;
+    const { id, ...updateData } = data;
 
     const challenge = await Challenge.findByIdAndUpdate(
       id,
-      {...updateData, updatedAt: new Date()},
-      {new: true, runValidators: true}
+      { ...updateData, updatedAt: new Date() },
+      { new: true, runValidators: true },
     );
 
     if (!challenge) {
-      return NextResponse.json({message: "Challenge not found"}, {status: 404});
+      return NextResponse.json(
+        { message: "Challenge not found" },
+        { status: 404 },
+      );
     }
 
     return NextResponse.json(challenge);
   } catch (error: unknown) {
     if (error instanceof Error) {
       if (error.name === "ValidationError") {
-        return NextResponse.json({message: error.message}, {status: 400});
+        return NextResponse.json({ message: error.message }, { status: 400 });
       }
     }
     return NextResponse.json(
-      {message: "Failed to update challenge"},
-      {status: 500}
+      { message: "Failed to update challenge" },
+      { status: 500 },
     );
   }
 }
@@ -127,7 +131,7 @@ export async function DELETE(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
-      return NextResponse.json({message: "Unauthorized"}, {status: 401});
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     await dbConnect();
@@ -137,15 +141,18 @@ export async function DELETE(request: Request) {
     const challenge = await Challenge.findByIdAndDelete(id);
 
     if (!challenge) {
-      return NextResponse.json({message: "Challenge not found"}, {status: 404});
+      return NextResponse.json(
+        { message: "Challenge not found" },
+        { status: 404 },
+      );
     }
 
-    return NextResponse.json({message: "Challenge deleted successfully"});
+    return NextResponse.json({ message: "Challenge deleted successfully" });
   } catch (error: unknown) {
     console.error("Delete challenge error:", error);
     return NextResponse.json(
-      {message: "Failed to delete challenge"},
-      {status: 500}
+      { message: "Failed to delete challenge" },
+      { status: 500 },
     );
   }
 }
