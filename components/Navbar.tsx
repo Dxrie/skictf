@@ -30,7 +30,11 @@ export default function Navbar() {
         { name: "Challenges", href: "/challenges" },
         { name: "Leaderboard", href: "/leaderboards" },
         { name: "Team", href: "/team" },
-        { name: "Discord", href: "https://discord.gg/NpV655hg97" },
+        {
+          name: "Discord",
+          href: "https://discord.gg/NpV655hg97",
+          target: "_blank",
+        },
         { name: "Survey", href: "/survey" },
       ];
 
@@ -50,7 +54,7 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                target={item.href.startsWith("/") ? "_self" : "_blank"}
+                target={item.target ?? "_self"}
                 className={`transition-colors hover:text-primary ${
                   isActive(item.href) ? "text-primary" : "text-muted-foreground"
                 }`}
