@@ -1,33 +1,37 @@
 "use client";
 
-import {useState} from "react";
+import { useState } from "react";
 import Link from "next/link";
-import {usePathname} from "next/navigation";
-import {useSession, signOut} from "next-auth/react";
-import {Button} from "@/components/ui/button";
-import {Menu} from "lucide-react";
-import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet";
+import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { Menu } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
-  const {data: session} = useSession();
+  const { data: session } = useSession();
 
   const navItems = session?.user.isAdmin
     ? [
-        {name: "Challenges", href: "/challenges"},
-        {name: "Leaderboard", href: "/leaderboards"},
-        {name: "Team", href: "/team"},
-        {name: "Discord", href: "https://discord.gg/NpV655hg97"},
+        { name: "Challenges", href: "/challenges" },
+        { name: "Leaderboard", href: "/leaderboards" },
+        { name: "Team", href: "/team" },
+        {
+          name: "Discord",
+          href: "https://discord.gg/NpV655hg97",
+          target: "_blank",
+        },
         // {name: "Survey", href: "/survey"},
-        {name: "Admin", href: "/admin"},
+        { name: "Admin", href: "/admin" },
       ]
     : [
-        {name: "Challenges", href: "/challenges"},
-        {name: "Leaderboard", href: "/leaderboards"},
-        {name: "Team", href: "/team"},
-        {name: "Discord", href: "https://discord.gg/NpV655hg97"},
-        {name: "Survey", href: "/survey"},
+        { name: "Challenges", href: "/challenges" },
+        { name: "Leaderboard", href: "/leaderboards" },
+        { name: "Team", href: "/team" },
+        { name: "Discord", href: "https://discord.gg/NpV655hg97" },
+        { name: "Survey", href: "/survey" },
       ];
 
   const isActive = (path: string) => pathname === path;
@@ -46,6 +50,7 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
+                target={item.href.startsWith("/") ? "_self" : "_blank"}
                 className={`transition-colors hover:text-primary ${
                   isActive(item.href) ? "text-primary" : "text-muted-foreground"
                 }`}
