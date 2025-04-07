@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface Challenge {
   _id: string;
@@ -54,7 +55,11 @@ export default function AdminChallengePage() {
     }
   };
 
-  const handlePublish = async (id: string) => {
+  const handlePublish = async (
+    id: string,
+    published: boolean,
+    name: string,
+  ) => {
     try {
       const response = await fetch("/api/challenges/publish", {
         method: "POST",
@@ -78,7 +83,17 @@ export default function AdminChallengePage() {
         ),
       );
 
-      alert("Done ges");
+      toast(
+        !published ? (
+          <span>
+            Challenge <b>{name}</b> has been published.
+          </span>
+        ) : (
+          <span>
+            Challenge <b>{name}</b> has been unpublished.
+          </span>
+        ),
+      );
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
@@ -136,8 +151,17 @@ export default function AdminChallengePage() {
                     </div>
                     <div className="flex gap-2 pt-2">
                       <Button
-                        variant="outline"
-                        onClick={() => handlePublish(challenge._id)}
+                        variant={
+                          challenge.published ? "destructive" : "outline"
+                        }
+                        className="cursor-pointer"
+                        onClick={() =>
+                          handlePublish(
+                            challenge._id,
+                            challenge.published,
+                            challenge.title,
+                          )
+                        }
                       >
                         {challenge.published ? "Unpublish" : "Publish"}
                       </Button>
