@@ -54,7 +54,7 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                target={item.target ?? "_self"}
+                target={item.target || "_self"}
                 className={`transition-colors hover:text-primary ${
                   isActive(item.href) ? "text-primary" : "text-muted-foreground"
                 }`}
