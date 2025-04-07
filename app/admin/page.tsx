@@ -22,21 +22,21 @@ export default function AdminPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Button
             onClick={() => router.push("/admin/challenges")}
-            className="h-32 text-xl"
+            className="h-32 text-xl cursor-pointer"
             variant={"ghost"}
           >
             Challenge Management
           </Button>
           <Button
             onClick={() => router.push("/admin/publishes")}
-            className="h-32 text-xl"
+            className="h-32 text-xl cursor-pointer"
             variant={"ghost"}
           >
             Challenge Publishment
           </Button>
           <Button
             onClick={() => router.push("/admin/surveys")}
-            className="h-32 text-xl"
+            className="h-32 text-xl cursor-pointer"
             variant={"ghost"}
           >
             Survey Responses
