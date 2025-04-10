@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import {IUser} from "./User";
 
 export interface ITeam extends mongoose.Document {
   name: string;
@@ -9,6 +8,7 @@ export interface ITeam extends mongoose.Document {
   updatedAt: Date;
   score: number;
   showInLeaderboard: boolean;
+  teamCode: string;
 }
 
 const teamSchema = new mongoose.Schema<ITeam>(
@@ -40,8 +40,15 @@ const teamSchema = new mongoose.Schema<ITeam>(
       type: Boolean,
       default: true,
     },
+    teamCode: {
+      type: String,
+      required: [true, "Team code is required"],
+      unique: true,
+      trim: true,
+      maxlength: [6, "Team code cannot be longer than 6 characters"],
+    },
   },
-  {timestamps: true}
+  { timestamps: true },
 );
 
 // Middleware to ensure leader inclusion
