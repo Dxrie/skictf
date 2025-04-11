@@ -67,8 +67,8 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           {children}
-          <Toaster />
           <Analytics />
+          <Toaster />
         </Providers>
       </body>
     </html>

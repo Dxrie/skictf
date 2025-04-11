@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface Challenge {
   _id: string;
@@ -274,6 +275,13 @@ export default function ChallengePage() {
 
                                       if (response.ok) {
                                         setFlagStatus("correct");
+                                        toast(
+                                          <span>
+                                            Challenge{" "}
+                                            <b>{selectedChallenge.title}</b> has
+                                            been solved.
+                                          </span>,
+                                        );
                                         setChallenges((prevChallenges) =>
                                           prevChallenges.map((c) =>
                                             c._id === selectedChallenge._id
