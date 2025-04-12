@@ -35,6 +35,13 @@ export default function AdminPage() {
             Challenge Publishment
           </Button>
           <Button
+            onClick={() => router.push("/admin/teams")}
+            className="h-32 text-xl cursor-pointer"
+            variant={"ghost"}
+          >
+            Team Viewer
+          </Button>
+          <Button
             onClick={() => router.push("/admin/surveys")}
             className="h-32 text-xl cursor-pointer"
             variant={"ghost"}
