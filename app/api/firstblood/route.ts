@@ -8,7 +8,7 @@ export async function GET() {
 
     const fb = await Fb.find().populate("challengeId").populate("teamId");
     return NextResponse.json(fb);
-  } catch (err) {
+  } catch (err: any) {
     console.error(err);
     return NextResponse.json({ message: err.message }, { status: 500 });
   }
