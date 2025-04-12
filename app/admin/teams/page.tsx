@@ -40,7 +40,7 @@ export default function TeamPage() {
     <div className="container mx-auto p-4 pb-6">
       <h1 className="text-3xl font-bold mb-6">Teams</h1>
       <Accordion type="single" collapsible className="w-full max-w-2xl mx-auto">
-        {teams.map((team) => (
+        {teams.map((team: any) => (
           <AccordionItem
             key={team._id}
             value={team._id}
@@ -53,7 +53,7 @@ export default function TeamPage() {
                 </span>
               </div>
             </AccordionTrigger>
-            {team.members.map((member) => (
+            {team.members.map((member: any) => (
               <AccordionContent key={member._id} className="px-4 py-2">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
