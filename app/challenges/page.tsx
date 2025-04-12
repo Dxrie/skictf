@@ -52,6 +52,7 @@ export default function ChallengePage() {
 
   const categoryOrder = [
     "Miscellaneous",
+    "OSINT",
     "Cryptography",
     "Binary Exploitation",
     "Digital Forensics",
