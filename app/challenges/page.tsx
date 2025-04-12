@@ -54,11 +54,11 @@ export default function ChallengePage() {
     "Miscellaneous",
     "Steganography",
     "OSINT",
-    "Cryptography",
-    "Binary Exploitation",
     "Digital Forensics",
-    "Web Exploitation",
+    "Cryptography",
     "Reverse Engineering",
+    "Web Exploitation",
+    "Binary Exploitation",
   ];
 
   const groupChallengesByCategory = (challenges: Challenge[]) => {
