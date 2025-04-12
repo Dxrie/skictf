@@ -18,16 +18,23 @@ export default function Navbar() {
         { name: "Leaderboard", href: "/leaderboards" },
         { name: "Team", href: "/team" },
         {
+          name: "First Blood",
+          href: "/firstblood",
+        },
+        {
           name: "Discord",
           href: "https://discord.gg/NpV655hg97",
         },
-        // {name: "Survey", href: "/survey"},
         { name: "Admin", href: "/admin" },
       ]
     : [
         { name: "Challenges", href: "/challenges" },
         { name: "Leaderboard", href: "/leaderboards" },
         { name: "Team", href: "/team" },
+        {
+          name: "First Blood",
+          href: "/firstblood",
+        },
         {
           name: "Discord",
           href: "https://discord.gg/NpV655hg97",

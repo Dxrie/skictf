@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,7 +30,7 @@ interface Team {
 
 export default function TeamPage() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const [team, setTeam] = useState<Team | null>(null);
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
@@ -84,6 +84,7 @@ export default function TeamPage() {
 
       setShowCreateDialog(false);
       setTeamName("");
+      await update();
       fetchTeam();
     } catch (error: unknown) {
       if (error instanceof Error) {

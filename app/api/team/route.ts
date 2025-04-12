@@ -97,9 +97,24 @@ export async function POST(req: Request) {
         teamCode,
       });
 
-      await User.findByIdAndUpdate(session.user.id, { teamId: team._id });
+      const updatedUser = await User.findByIdAndUpdate(
+        session.user.id,
+        { teamId: team._id },
+        { new: true },
+      );
 
-      return NextResponse.json(team, { status: 201 });
+      return NextResponse.json(
+        {
+          team,
+          user: {
+            id: updatedUser._id,
+            email: updatedUser.email,
+            username: updatedUser.username,
+            teamId: updatedUser.teamId,
+          },
+        },
+        { status: 201 },
+      );
     } catch (error: unknown) {
       console.error("Database operation error:", error);
       if (error instanceof Error && error.name === "ValidationError") {

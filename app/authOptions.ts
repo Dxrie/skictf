@@ -1,6 +1,6 @@
-import {NextAuthOptions} from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import {User} from "@/models/User";
+import { User } from "@/models/User";
 import connectDB from "@/lib/db";
 
 const authOptions: NextAuthOptions = {
@@ -8,8 +8,8 @@ const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        email: {label: "Email", type: "email"},
-        password: {label: "Password", type: "password"},
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -18,7 +18,7 @@ const authOptions: NextAuthOptions = {
 
         await connectDB();
 
-        const user = await User.findOne({email: credentials.email});
+        const user = await User.findOne({ email: credentials.email });
 
         if (!user) {
           throw new Error("User not found");
@@ -48,19 +48,19 @@ const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({token, user}) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.isAdmin = user.isAdmin;
-        token.teamId = user.teamId;
+        token.teamId = user.teamId ?? null;
       }
       return token;
     },
-    async session({session, token}) {
+    async session({ session, token }) {
       if (token) {
-        session.user.id = token.id;
-        session.user.isAdmin = token.isAdmin;
-        session.user.teamId = token.teamId;
+        session.user.id = token.id as string;
+        session.user.isAdmin = token.isAdmin as boolean;
+        session.user.teamId = token.teamId ?? null;
       }
       return session;
     },

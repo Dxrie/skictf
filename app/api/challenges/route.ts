@@ -4,6 +4,7 @@ import authOptions from "@/app/authOptions";
 import dbConnect from "@/lib/db";
 import Challenge from "@/models/Challenge";
 import { PublishModel } from "@/models/Publish";
+import { User } from "@/models/User";
 
 export async function GET() {
   try {
@@ -13,13 +14,15 @@ export async function GET() {
       .populate("author", "username")
       .sort({ createdAt: -1 });
     const publish = await PublishModel.findOne({ publish: true });
+    const user = await User.findById(session?.user?.id);
 
-    if (session?.user?.teamId && publish) {
+    console.log(session?.user);
+    if (user.teamId && publish) {
       const filtered = challenges.filter((ch) => ch.published === true);
 
       const challengesWithSolvedStatus = filtered.map((challenge) => ({
         ...challenge.toObject(),
-        isSolved: challenge.solves?.includes(session?.user.teamId) || false,
+        isSolved: challenge.solves?.includes(user.teamId) || false,
       }));
       return NextResponse.json(challengesWithSolvedStatus);
     }
@@ -37,6 +40,7 @@ export async function GET() {
       { status: 400 },
     );
   } catch (error) {
+    console.error(error);
     return NextResponse.json(
       { message: "Failed to fetch challenges" },
       { status: 500 },
