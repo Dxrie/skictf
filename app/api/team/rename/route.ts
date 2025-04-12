@@ -1,5 +1,5 @@
 import authOptions from "@/app/authOptions";
-import { Team } from "@/models/Team";
+import Team from "@/models/Team";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 

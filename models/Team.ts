@@ -60,5 +60,6 @@ teamSchema.pre("save", async function (next) {
   next();
 });
 
-export const Team =
-  mongoose.models.Team || mongoose.model<ITeam>("Team", teamSchema);
+const Team = mongoose.models.Team || mongoose.model<ITeam>("Team", teamSchema);
+
+export default Team;

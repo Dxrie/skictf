@@ -4,7 +4,7 @@ import authOptions from "@/app/authOptions";
 import dbConnect from "@/lib/db";
 import Challenge from "@/models/Challenge";
 import { User } from "@/models/User";
-import { Team } from "@/models/Team";
+import Team from "@/models/Team";
 import Fb from "@/models/Fb";
 
 export async function POST(
