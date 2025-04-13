@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,9 @@ export default function AdminChallengePage() {
   );
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
 
   const groupChallengesByCategory = (challenges: Challenge[]) => {
     const uniqueCategories = Array.from(
@@ -43,6 +46,14 @@ export default function AdminChallengePage() {
     );
     setCategories(uniqueCategories);
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   useEffect(() => {
     if (!session) {
@@ -144,146 +155,190 @@ export default function AdminChallengePage() {
     }
   };
 
+  const filteredCategories = selectedCategory
+    ? categories.filter((category) => category === selectedCategory)
+    : categories;
+
+  const filteredChallenges = challenges.filter((challenge) => {
+    const matchesCategory = selectedCategory
+      ? challenge.category === selectedCategory
+      : true;
+    const matchesSearch =
+      challenge.title.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+      challenge.description
+        .toLowerCase()
+        .includes(debouncedQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
   return (
     <div className="min-h-screen bg-background px-4 py-16">
       <div className="container mx-auto max-w-7xl">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            Challenge Management
-          </h1>
-          <Dialog
-            open={showDialog}
-            onOpenChange={(open) => {
-              if (!open) {
-                setEditingChallenge(null);
-                setShowDialog(false);
-              } else {
-                setEditingChallenge(editingChallenge);
-                setShowDialog(true);
-              }
-            }}
-          >
-            <DialogTrigger asChild>
-              <Button onClick={() => setShowDialog(true)}>Add Challenge</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingChallenge ? "Edit Challenge" : "Add New Challenge"}
-                </DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label htmlFor="title">Title</Label>
-                  <Input
-                    id="title"
-                    name="title"
-                    defaultValue={editingChallenge?.title}
-                    required
-                    className="mt-1"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="description">Description</Label>
-                  <Input
-                    id="description"
-                    name="description"
-                    defaultValue={editingChallenge?.description}
-                    required
-                    className="mt-1"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="points">Points</Label>
-                  <Input
-                    id="points"
-                    name="points"
-                    type="number"
-                    min="0"
-                    defaultValue={editingChallenge?.points}
-                    required
-                    className="mt-1"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="category">Category</Label>
-                  <select
-                    id="category"
-                    name="category"
-                    defaultValue={editingChallenge?.category}
-                    required
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <option value="">Select a category</option>
-                    <option value="Digital Forensics">Digital Forensics</option>
-                    <option value="Steganography">Steganography</option>
-                    <option value="OSINT">OSINT</option>
-                    <option value="Web Exploitation">Web Exploitation</option>
-                    <option value="Binary Exploitation">
-                      Binary Exploitation
-                    </option>
-                    <option value="Reverse Engineering">
-                      Reverse Engineering
-                    </option>
-                    <option value="Cryptography">Cryptography</option>
-                    <option value="Miscellaneous">Miscellaneous</option>
-                  </select>
-                </div>
-
-                <div>
-                  <Label>File URLs</Label>
-                  {[0, 1, 2].map((index) => (
-                    <Input
-                      key={index}
-                      name="fileUrls"
-                      defaultValue={editingChallenge?.fileUrls?.[index] || ""}
-                      className="mt-1"
-                      placeholder={`File URL ${index + 1} (optional)`}
-                    />
-                  ))}
-                </div>
-
-                <div>
-                  <Label htmlFor="flag">Correct Flag</Label>
-                  <Input
-                    id="flag"
-                    name="flag"
-                    type="text"
-                    defaultValue={editingChallenge?.flag}
-                    required
-                    className="mt-1"
-                    placeholder="SKICTF{...}"
-                  />
-                </div>
-
-                {error && (
-                  <p className="text-red-500 text-sm text-center">{error}</p>
-                )}
-
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading
-                    ? editingChallenge
-                      ? "Updating..."
-                      : "Creating..."
-                    : editingChallenge
-                      ? "Update Challenge"
-                      : "Create Challenge"}
+        <div className="flex flex-col gap-4 mb-8">
+          <div className="flex justify-between items-center">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              Challenge Management
+            </h1>
+            <Dialog
+              open={showDialog}
+              onOpenChange={(open) => {
+                if (!open) {
+                  setEditingChallenge(null);
+                  setShowDialog(false);
+                } else {
+                  setEditingChallenge(editingChallenge);
+                  setShowDialog(true);
+                }
+              }}
+            >
+              <DialogTrigger asChild>
+                <Button onClick={() => setShowDialog(true)}>
+                  Add Challenge
                 </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>
+                    {editingChallenge ? "Edit Challenge" : "Add New Challenge"}
+                  </DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <Label htmlFor="title">Title</Label>
+                    <Input
+                      id="title"
+                      name="title"
+                      defaultValue={editingChallenge?.title}
+                      required
+                      className="mt-1"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="description">Description</Label>
+                    <Input
+                      id="description"
+                      name="description"
+                      defaultValue={editingChallenge?.description}
+                      required
+                      className="mt-1"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="points">Points</Label>
+                    <Input
+                      id="points"
+                      name="points"
+                      type="number"
+                      min="0"
+                      defaultValue={editingChallenge?.points}
+                      required
+                      className="mt-1"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="category">Category</Label>
+                    <select
+                      id="category"
+                      name="category"
+                      defaultValue={editingChallenge?.category}
+                      required
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <option value="">Select a category</option>
+                      <option value="Digital Forensics">
+                        Digital Forensics
+                      </option>
+                      <option value="Steganography">Steganography</option>
+                      <option value="OSINT">OSINT</option>
+                      <option value="Web Exploitation">Web Exploitation</option>
+                      <option value="Binary Exploitation">
+                        Binary Exploitation
+                      </option>
+                      <option value="Reverse Engineering">
+                        Reverse Engineering
+                      </option>
+                      <option value="Cryptography">Cryptography</option>
+                      <option value="Miscellaneous">Miscellaneous</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <Label>File URLs</Label>
+                    {[0, 1, 2].map((index) => (
+                      <Input
+                        key={index}
+                        name="fileUrls"
+                        defaultValue={editingChallenge?.fileUrls?.[index] || ""}
+                        className="mt-1"
+                        placeholder={`File URL ${index + 1} (optional)`}
+                      />
+                    ))}
+                  </div>
+
+                  <div>
+                    <Label htmlFor="flag">Correct Flag</Label>
+                    <Input
+                      id="flag"
+                      name="flag"
+                      type="text"
+                      defaultValue={editingChallenge?.flag}
+                      required
+                      className="mt-1"
+                      placeholder="SKICTF{...}"
+                    />
+                  </div>
+
+                  {error && (
+                    <p className="text-red-500 text-sm text-center">{error}</p>
+                  )}
+
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading
+                      ? editingChallenge
+                        ? "Updating..."
+                        : "Creating..."
+                      : editingChallenge
+                        ? "Update Challenge"
+                        : "Create Challenge"}
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <div className="flex gap-4">
+            <Input
+              type="text"
+              placeholder="Search challenges..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="max-w-sm"
+            />
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+            >
+              <option value="">All Categories</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        {categories.map((category) => (
+        {filteredCategories.map((category) => (
           <div key={category} className="mb-8">
             <h2 className="text-2xl font-semibold text-primary mb-4">
               {category}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {challenges
+              {filteredChallenges
                 .filter((challenge) => challenge.category === category)
                 .sort((a, b) => a.points - b.points)
                 .map((challenge) => (

@@ -9,7 +9,9 @@ export async function GET() {
 
     await User.find();
 
-    const teams = await Team.find().populate("members");
+    const teams = await Team.find({ showInLeaderboard: true }).populate(
+      "members",
+    );
     return NextResponse.json(teams);
   } catch (err: any) {
     console.error(err);

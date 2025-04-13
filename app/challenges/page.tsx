@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -37,6 +37,7 @@ export default function ChallengePage() {
   const { data: session } = useSession();
   const router = useRouter();
   const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [filteredChallenges, setFilteredChallenges] = useState<Challenge[]>([]);
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(
     null,
   );
@@ -49,6 +50,9 @@ export default function ChallengePage() {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [categories, setCategories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
   const categoryOrder = [
     "Miscellaneous",
@@ -77,12 +81,38 @@ export default function ChallengePage() {
     fetchChallenges();
   }, [session]);
 
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Filter challenges based on search
+  useEffect(() => {
+    if (!challenges) return;
+
+    const filtered = challenges.filter(
+      (challenge) =>
+        challenge.title
+          .toLowerCase()
+          .includes(debouncedSearchTerm.toLowerCase()) ||
+        challenge.description
+          .toLowerCase()
+          .includes(debouncedSearchTerm.toLowerCase()),
+    );
+    setFilteredChallenges(filtered);
+  }, [debouncedSearchTerm, challenges]);
+
   const fetchChallenges = async () => {
     try {
       const response = await fetch("/api/challenges");
       if (response.ok) {
         const data = await response.json();
         setChallenges(data);
+        setFilteredChallenges(data);
         groupChallengesByCategory(data);
       } else {
         const errorData = await response.json();
@@ -107,6 +137,11 @@ export default function ChallengePage() {
       </div>
     );
   }
+
+  const categoriesToDisplay = selectedCategory
+    ? [selectedCategory]
+    : categories;
+
   return bruh ? (
     <div className="min-h-screen bg-background px-4 py-16">
       <div className="container mx-auto max-w-7xl">
@@ -122,13 +157,41 @@ export default function ChallengePage() {
           Challenges
         </h1>
 
-        {categories.map((category) => (
+        <div className="mb-8 space-y-4">
+          <Input
+            type="search"
+            placeholder="Search challenges..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="max-w-md"
+          />
+
+          <div className="flex flex-wrap gap-2">
+            <Button
+              onClick={() => setSelectedCategory(null)}
+              variant={!selectedCategory ? "default" : "outline"}
+            >
+              All
+            </Button>
+            {categories.map((category) => (
+              <Button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                variant={selectedCategory === category ? "default" : "outline"}
+              >
+                {category}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {categoriesToDisplay.map((category) => (
           <div key={category} className="mb-8">
             <h2 className="text-2xl font-semibold text-primary mb-4">
               {category}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {challenges
+              {filteredChallenges
                 .filter((challenge) => challenge.category === category)
                 .sort((a, b) => a.points - b.points)
                 .map((challenge) => (
