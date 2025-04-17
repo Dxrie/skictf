@@ -24,17 +24,15 @@ export default function TeamPage() {
       router.push("/");
       return;
     }
-  }, [session]);
-
-  useEffect(() => {
-    const fetchTeams = async () => {
-      const response = await fetch("/api/teams");
-      const data = await response.json();
-      setTeams(data);
-    };
 
     fetchTeams();
-  }, []);
+  }, [session]);
+
+  const fetchTeams = async () => {
+    const response = await fetch("/api/teams");
+    const data = await response.json();
+    setTeams(data);
+  };
 
   return (
     <div className="container mx-auto p-4 pb-6">
