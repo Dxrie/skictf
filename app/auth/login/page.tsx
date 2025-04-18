@@ -1,18 +1,30 @@
 "use client";
 
-import {useEffect, useState} from "react";
-import {signIn, useSession} from "next-auth/react";
-import {useRouter} from "next/navigation";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
+import { useEffect, useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function LoginPage() {
   const router = useRouter();
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-  const {data: session} = useSession();
+  const { data: session } = useSession();
+  const [showVerificationDialog, setShowVerificationDialog] = useState(false);
+  const [userEmail, setUserEmail] = useState<string>("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,6 +35,8 @@ export default function LoginPage() {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
+    setUserEmail(email);
+
     try {
       const result = await signIn("credentials", {
         email,
@@ -31,12 +45,13 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        if (result.error === "Please verify your email before logging in") {
-          setError(
-            "Please check your email and verify your account before logging in."
-          );
+        if (
+          result.error ===
+          "Verification token has expired. Please request a new verification email."
+        ) {
+          setShowVerificationDialog(true);
         } else {
-          setError("Invalid credentials");
+          setError(result.error);
         }
         return;
       }
@@ -47,6 +62,30 @@ export default function LoginPage() {
       setError("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    try {
+      const response = await fetch("/api/auth/resend-verification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: userEmail }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || "Failed to resend verification email");
+        return;
+      }
+
+      setError("");
+      setShowVerificationDialog(false);
+    } catch (error: any) {
+      setError("An error occurred while resending verification email");
     }
   };
 
@@ -110,6 +149,27 @@ export default function LoginPage() {
           </p>
         </form>
       </div>
+
+      <AlertDialog
+        open={showVerificationDialog}
+        onOpenChange={setShowVerificationDialog}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Verification Expired</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your verification token has expired. Would you like to request a
+              new verification email?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleResendVerification}>
+              Resend Verification
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

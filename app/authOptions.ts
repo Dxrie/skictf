@@ -21,17 +21,28 @@ const authOptions: NextAuthOptions = {
         const user = await User.findOne({ email: credentials.email });
 
         if (!user) {
-          throw new Error("User not found");
-        }
-
-        if (!user.isVerified) {
-          throw new Error("Please verify your email before logging in");
+          throw new Error("Invalid credentials");
         }
 
         const isValid = await user.comparePassword(credentials.password);
 
         if (!isValid) {
-          throw new Error("Invalid password");
+          throw new Error("Invalid credentials");
+        }
+
+        console.log(user);
+
+        if (!user.isVerified) {
+          if (
+            user.verificationTokenExpires &&
+            new Date() > new Date(user.verificationTokenExpires)
+          ) {
+            throw new Error(
+              "Verification token has expired. Please request a new verification email.",
+            );
+          } else {
+            throw new Error("Please verify your email before logging in");
+          }
         }
 
         return {
