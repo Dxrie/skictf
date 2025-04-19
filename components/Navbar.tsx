@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -74,7 +73,9 @@ export default function Navbar() {
               <Button
                 variant="ghost"
                 className="text-sm hover:text-primary min-w-[80px]"
-                onClick={() => signOut()}
+                onClick={() => {
+                  signOut();
+                }}
               >
                 Sign out
               </Button>

@@ -16,6 +16,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import Link from "next/link";
 
 function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(false);
@@ -35,7 +36,7 @@ function useMediaQuery(query: string): boolean {
 
 interface Member {
   username: string;
-  id: string;
+  _id: string;
 }
 
 interface Team {
@@ -105,7 +106,9 @@ export default function LeaderboardPage() {
               {teams.map((team, index) => (
                 <TableRow key={team._id}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
-                  <TableCell>{team.name}</TableCell>
+                  <TableCell>
+                    <Link href={`/teams/${team._id}`}>{team.name}</Link>
+                  </TableCell>
                   <TableCell className="text-right">
                     {isLargeScreen ? (
                       <Accordion type="single" collapsible className="w-full">
@@ -116,7 +119,7 @@ export default function LeaderboardPage() {
                           <AccordionContent>
                             <ul className="space-y-1 pl-2">
                               {team.members.map((member) => (
-                                <li key={member.id} className="text-sm">
+                                <li key={member._id} className="text-sm">
                                   {member.username}
                                 </li>
                               ))}
