@@ -68,8 +68,11 @@ export default function Team({ teamId }: { teamId: string }) {
                 {team.members.map((member) => (
                   <li
                     key={member._id}
-                    className="flex items-center justify-between border-b pb-2"
+                    className="flex items-center justify-start gap-2 border-b pb-2"
                   >
+                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                      {member.username[0].toUpperCase()}
+                    </div>
                     <span className="font-medium text-lg">
                       {member.username}
                     </span>
