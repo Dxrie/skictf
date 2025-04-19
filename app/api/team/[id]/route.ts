@@ -13,7 +13,7 @@ export async function GET(
     const { id } = await context.params;
     const team = await Team.findById(id)
       .populate("members", "username _id")
-      .populate("leader");
+      .populate("leader", "username");
 
     if (!team) {
       return NextResponse.json({ message: "Team not found" }, { status: 404 });
