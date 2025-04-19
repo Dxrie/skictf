@@ -11,6 +11,9 @@ export async function GET(
   try {
     await connectDB();
     const { id } = await context.params;
+
+    await User.findOne();
+
     const team = await Team.findById(id)
       .populate("members", "username _id")
       .populate("leader", "username");

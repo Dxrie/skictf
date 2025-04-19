@@ -5,6 +5,8 @@ import { User } from "@/models/User";
 export async function GET() {
   await connectDB();
 
+  await User.findOne();
+
   const teams = await Team.find({ showInLeaderboard: true })
     .populate("members", "username _id")
     .sort({
