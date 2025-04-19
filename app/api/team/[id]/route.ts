@@ -1,6 +1,7 @@
 import Challenge from "@/models/Challenge";
 import connectDB from "@/lib/db";
 import Team from "@/models/Team";
+import { User } from "@/models/User";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
