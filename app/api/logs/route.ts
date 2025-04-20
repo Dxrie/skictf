@@ -36,7 +36,7 @@ export async function GET() {
       .exec();
 
     return NextResponse.json(logs);
-  } catch (err) {
+  } catch (err: any) {
     console.error(err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
