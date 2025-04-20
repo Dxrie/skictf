@@ -6,6 +6,7 @@ import Challenge from "@/models/Challenge";
 import { User } from "@/models/User";
 import Team from "@/models/Team";
 import Fb from "@/models/Fb";
+import { Log } from "@/models/Log";
 
 export async function POST(
   request: Request,
@@ -96,6 +97,13 @@ export async function POST(
 
         console.log("Flag submitted by team:", team.name);
       }
+
+      const log = new Log({
+        memberId: user._id,
+        challengeId: chall._id,
+        solvedAt: new Date(),
+      });
+      await log.save();
     }
 
     return NextResponse.json(

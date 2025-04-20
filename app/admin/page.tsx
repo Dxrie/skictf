@@ -49,6 +49,13 @@ export default function AdminPage() {
             Team Viewer
           </Button>
           <Button
+            onClick={() => router.push("/admin/logs")}
+            className="h-32 text-xl cursor-pointer"
+            variant={"ghost"}
+          >
+            Correct Submission Logs
+          </Button>
+          <Button
             onClick={() => router.push("/admin/surveys")}
             className="h-32 text-xl cursor-pointer"
             variant={"ghost"}
