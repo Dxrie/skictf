@@ -3,15 +3,22 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
 
 export default function AdminPage() {
   const router = useRouter();
   const { data: session } = useSession();
 
-  if (!session?.user.isAdmin) {
-    router.push("/");
-    return null;
-  }
+  useEffect(() => {
+    if (!session) {
+      router.push("/auth/login");
+      return;
+    }
+    if (!session.user.isAdmin) {
+      router.push("/");
+      return;
+    }
+  }, [session]);
 
   return (
     <div className="min-h-screen bg-background px-4 py-16">

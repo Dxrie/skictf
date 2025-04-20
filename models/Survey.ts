@@ -16,6 +16,8 @@ const SurveySchema = new mongoose.Schema(
         "Reverse Engineering",
         "Binary Exploitation",
         "Miscellaneous",
+        "OSINT",
+        "Steganography",
       ],
       required: true,
     },
@@ -28,6 +30,8 @@ const SurveySchema = new mongoose.Schema(
         "Reverse Engineering",
         "Binary Exploitation",
         "Miscellaneous",
+        "OSINT",
+        "Steganography",
       ],
       required: true,
     },
@@ -39,12 +43,16 @@ const SurveySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    worstAuthor: {
+      type: String,
+      required: true,
+    },
     feedback: {
       type: String,
       required: true,
     },
   },
-  {timestamps: true}
+  { timestamps: true },
 );
 
 const Survey = mongoose.models.Survey || mongoose.model("Survey", SurveySchema);

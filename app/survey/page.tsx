@@ -1,12 +1,12 @@
 "use client";
 
-import {useState, useEffect} from "react";
-import {useSession} from "next-auth/react";
-import {useRouter} from "next/navigation";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-import {Textarea} from "@/components/ui/textarea";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Challenge {
   _id: string;
@@ -16,12 +16,12 @@ interface Challenge {
 
 export default function SurveyPage() {
   const router = useRouter();
-  const {data: session} = useSession();
+  const { data: session } = useSession();
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [team, setTeam] = useState<{name: string} | null>(null);
+  const [team, setTeam] = useState<{ name: string } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function SurveyPage() {
         const data = await response.json();
         setChallenges(data);
         const uniqueCategories = Array.from(
-          new Set(data.map((c: Challenge) => c.category))
+          new Set(data.map((c: Challenge) => c.category)),
         );
         setCategories(uniqueCategories as string[]);
       }
@@ -78,6 +78,7 @@ export default function SurveyPage() {
       difficultCategory: formData.get("difficultCategory"),
       difficultChallenge: formData.get("difficultChallenge"),
       bestAuthor: formData.get("bestAuthor"),
+      worstAuthor: formData.get("worstAuthor"),
       feedback: formData.get("feedback"),
     };
 
@@ -91,7 +92,8 @@ export default function SurveyPage() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to submit survey");
+        const data = await response.json();
+        throw new Error(data.message);
       }
 
       router.push("/");
@@ -178,6 +180,24 @@ export default function SurveyPage() {
             <select
               id="bestAuthor"
               name="bestAuthor"
+              required
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <option value="">Select an author</option>
+              <option value="chchh">chchh</option>
+              <option value="LynxJL">LynxJL</option>
+              <option value="Dxrie">Dxrie</option>
+              <option value="Aurichia">Aurichia</option>
+            </select>
+          </div>
+
+          <div>
+            <Label htmlFor="worstAuthor">
+              Which author's challenges did you hate the most?
+            </Label>
+            <select
+              id="worstAuthor"
+              name="worstAuthor"
               required
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >

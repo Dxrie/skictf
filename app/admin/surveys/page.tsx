@@ -1,8 +1,8 @@
 "use client";
 
-import {useState, useEffect} from "react";
-import {useSession} from "next-auth/react";
-import {useRouter} from "next/navigation";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface SurveyResponse {
   _id: string;
@@ -11,6 +11,7 @@ interface SurveyResponse {
   difficultCategory: string;
   mostChallengingChallenge: string;
   bestAuthor: string;
+  worstAuthor: string;
   feedback: string;
   createdAt: string;
   user?: {
@@ -21,7 +22,7 @@ interface SurveyResponse {
 
 export default function AdminSurveysPage() {
   const router = useRouter();
-  const {data: session} = useSession();
+  const { data: session } = useSession();
   const [surveys, setSurveys] = useState<SurveyResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -75,22 +76,33 @@ export default function AdminSurveysPage() {
                 <th className="py-2 px-4 text-left">Difficult Category</th>
                 <th className="py-2 px-4 text-left">Difficult Challenge</th>
                 <th className="py-2 px-4 text-left">Best Author</th>
+                <th className="py-2 px-4 text-left">Worst Author</th>
                 <th className="py-2 px-4 text-left">Feedback</th>
                 <th className="py-2 px-4 text-left">Submitted At</th>
               </tr>
             </thead>
             <tbody>
               {surveys.map((survey) => (
-                <tr key={survey._id} className="border-b border-border hover:bg-muted/50">
+                <tr
+                  key={survey._id}
+                  className="border-b border-border hover:bg-muted/50"
+                >
                   <td className="py-2 px-4">
                     <div>{survey.user?.username || "Unknown"}</div>
-                    <div className="text-sm text-muted-foreground">{survey.user?.email || ""}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {survey.user?.email || ""}
+                    </div>
                   </td>
                   <td className="py-2 px-4">{survey.interestedCategory}</td>
                   <td className="py-2 px-4">{survey.difficultCategory}</td>
-                  <td className="py-2 px-4">{survey.mostChallengingChallenge}</td>
+                  <td className="py-2 px-4">
+                    {survey.mostChallengingChallenge}
+                  </td>
                   <td className="py-2 px-4">{survey.bestAuthor}</td>
-                  <td className="py-2 px-4 whitespace-pre-wrap">{survey.feedback}</td>
+                  <td className="py-2 px-4">{survey.worstAuthor}</td>
+                  <td className="py-2 px-4 whitespace-pre-wrap">
+                    {survey.feedback}
+                  </td>
                   <td className="py-2 px-4">
                     {new Date(survey.createdAt).toLocaleDateString()}
                   </td>
