@@ -78,6 +78,26 @@ export default function Home() {
             </p>
           </div>
           <div className="group p-6 rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div className="mb-4 text-primary text-2xl">📷</div>
+            <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
+              Steganography
+            </h3>
+            <p className="text-muted-foreground">
+              Analyze hidden data within images, uncover hidden messages, and
+              decode steganographic techniques.
+            </p>
+          </div>
+          <div className="group p-6 rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div className="mb-4 text-primary text-2xl">🕵️</div>
+            <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
+              OSINT
+            </h3>
+            <p className="text-muted-foreground">
+              Gathering information from publicly available sources to uncover
+              hidden data and hidden messages.
+            </p>
+          </div>
+          <div className="group p-6 rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
             <div className="mb-4 text-primary text-2xl">🛠️</div>
             <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
               Miscellaneous
