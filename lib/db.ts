@@ -26,12 +26,11 @@ async function connectDB() {
     const opts = {
       bufferCommands: false,
       maxPoolSize: 10, // max number of connections in the pool
-      minPoolSize: 2, // keep some idle connections ready
-      maxIdleTimeMS: 1000 * 60, // close idle connections after 1 minute
+      minPoolSize: 2, // keep some idle connections warm
+      maxIdleTimeMS: 60000, // close idle connections after 1 minute
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
-      keepAlive: true,
-      keepAliveInitialDelay: 300000, // 5 minutes
+      // keepAlive options REMOVED — no longer valid in modern drivers
     };
 
     cached.promise = mongoose
