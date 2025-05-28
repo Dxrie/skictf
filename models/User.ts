@@ -7,6 +7,7 @@ export interface IUser extends mongoose.Document {
   username: string;
   teamId?: mongoose.Types.ObjectId;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   isVerified: boolean;
   verificationToken: string;
   verificationTokenExpires: Date;
@@ -38,6 +39,10 @@ const userSchema = new mongoose.Schema<IUser>(
       type: Boolean,
       default: false,
     },
+    isSuperAdmin: {
+      type: Boolean,
+      default: false,
+    },
     password: {
       type: String,
       required: [true, "Password is required"],
@@ -54,7 +59,7 @@ const userSchema = new mongoose.Schema<IUser>(
       ref: "Team",
     },
   },
-  {timestamps: true}
+  { timestamps: true },
 );
 
 // Hash password before saving
@@ -73,7 +78,7 @@ userSchema.pre("save", async function (next) {
 
 // Compare password method
 userSchema.methods.comparePassword = async function (
-  candidatePassword: string
+  candidatePassword: string,
 ) {
   return bcrypt.compare(candidatePassword, this.password);
 };

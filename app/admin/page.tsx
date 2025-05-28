@@ -62,6 +62,13 @@ export default function AdminPage() {
           >
             Survey Responses
           </Button>
+          <Button
+            onClick={() => router.push("/admin/competition")}
+            className="h-32 text-xl cursor-pointer"
+            variant={"ghost"}
+          >
+            Start Competition
+          </Button>
         </div>
       </div>
     </div>

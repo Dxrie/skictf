@@ -17,7 +17,7 @@ export async function GET() {
     const user = await User.findById(session?.user?.id);
 
     console.log(session?.user);
-    if (user.teamId && publish) {
+    if (user?.teamId && publish) {
       const filtered = challenges.filter((ch) => ch.published === true);
 
       const challengesWithSolvedStatus = filtered.map((challenge) => ({
@@ -28,7 +28,8 @@ export async function GET() {
     }
 
     if (!session?.user?.isAdmin && publish) {
-      return NextResponse.json(challenges);
+      const filtered = challenges.filter((ch) => ch.published === true);
+      return NextResponse.json(filtered);
     }
 
     if (session?.user.isAdmin) {
