@@ -117,10 +117,8 @@ export default function ChallengePage() {
       } else {
         const errorData = await response.json();
 
-        if (errorData.message === "Event hasn't started yet.") {
+        if (response.status === 403) {
           setBruh(errorData.message);
-        } else {
-          console.error("Error fetching challenges:", errorData.message);
         }
       }
     } catch (error) {

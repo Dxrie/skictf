@@ -27,18 +27,22 @@ export async function GET() {
       return NextResponse.json(challengesWithSolvedStatus);
     }
 
-    if (!session?.user?.isAdmin && publish) {
-      const filtered = challenges.filter((ch) => ch.published === true);
-      return NextResponse.json(filtered);
-    }
-
     if (session?.user.isAdmin) {
       return NextResponse.json(challenges);
     }
 
+    if (!user?.teamId) {
+      return NextResponse.json(
+        { message: "You must be part of a team to view challenges." },
+        { status: 403 },
+      );
+    }
+
     return NextResponse.json(
-      { message: "Event hasn't started yet." },
-      { status: 400 },
+      {
+        message: "The event hasn't started yet.",
+      },
+      { status: 403 },
     );
   } catch (error) {
     console.error(error);
@@ -53,20 +57,15 @@ export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
+    }
+
+    if (!session.user.isAdmin) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
     }
 
     await dbConnect();
     const data = await request.json();
-
-    // Validate GitHub URL
-    // if (!data.fileUrl.startsWith('https://github.com/') &&
-    //     !data.fileUrl.startsWith('https://raw.githubusercontent.com/')) {
-    //   return NextResponse.json(
-    //     { message: 'Invalid GitHub URL' },
-    //     { status: 400 }
-    //   );
-    // }
 
     const challenge = await Challenge.create({
       ...data,
@@ -98,7 +97,11 @@ export async function PUT(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
+    }
+
+    if (!session.user.isAdmin) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
     }
 
     await dbConnect();
@@ -136,7 +139,11 @@ export async function DELETE(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
+    }
+
+    if (!session.user.isAdmin) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
     }
 
     await dbConnect();
