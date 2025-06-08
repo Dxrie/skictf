@@ -331,7 +331,7 @@ export default function ChallengePage() {
                                             "Content-Type": "application/json",
                                           },
                                           body: JSON.stringify({
-                                            flag: flagInput,
+                                            flag: flagInput.trim(),
                                           }),
                                         },
                                       );
