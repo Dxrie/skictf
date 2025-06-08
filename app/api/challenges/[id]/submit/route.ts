@@ -76,7 +76,11 @@ export async function POST(
     // Update challenge solve count
     const chall = await Challenge.findById((await context.params).id);
 
-    if (!chall.solves.includes(user.teamId) && !user.isAdmin) {
+    if (
+      !chall.solves.includes(user.teamId) &&
+      !user.isAdmin &&
+      team.showInLeaderboard
+    ) {
       if (chall.solveCount <= 0) {
         chall.solves.push(user.teamId);
         chall.solveCount++;
