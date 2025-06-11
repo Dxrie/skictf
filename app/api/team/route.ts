@@ -14,26 +14,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    if (session?.user.isAdmin) {
+    if (session?.user?.isAdmin) {
       return NextResponse.json(
         { message: "Admin cannot create a team" },
         { status: 400 },
       );
     }
-
-    // const publish = await PublishModel.findOne({ publish: true });
-
-    // if (!publish) {
-    //   return NextResponse.json(
-    //     {
-    //       message:
-    //         "Challenges are not published yet and you cannot create a team",
-    //     },
-    //     { status: 400 },
-    //   );
-    // }
-
-    return NextResponse.json({message: "Nuh uh"}, {status: 400});
 
     let { name } = await req.json().catch(() => ({}));
 
@@ -64,7 +50,7 @@ export async function POST(req: Request) {
 
     try {
       // Check if user is already in a team
-      const user = await User.findById(session.user.id);
+      const user = await User.findById(session?.user?.id);
       if (!user) {
         return NextResponse.json(
           { message: "User not found" },
