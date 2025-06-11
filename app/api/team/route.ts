@@ -14,7 +14,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    if (session.user.isAdmin) {
+    if (session?.user.isAdmin) {
       return NextResponse.json(
         { message: "Admin cannot create a team" },
         { status: 400 },
