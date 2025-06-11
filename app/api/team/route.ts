@@ -33,6 +33,8 @@ export async function POST(req: Request) {
     //   );
     // }
 
+    return NextResponse.json({message: "Nuh uh"}, {status: 400});
+
     let { name } = await req.json().catch(() => ({}));
 
     if (!name || typeof name !== "string") {
