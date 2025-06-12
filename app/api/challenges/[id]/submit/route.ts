@@ -52,6 +52,11 @@ export async function POST(
       return NextResponse.json({ message: "Team not found" }, { status: 404 });
     }
 
+    return NextResponse.json(
+      { message: "Submission has been blocked" },
+      { status: 403 },
+    );
+
     // Validate flag
     const prefix = "SKICTF{";
     if (
